@@ -370,8 +370,12 @@ public class Transaction extends PagarMeModel<Integer> {
      */
     @Expose
     private Map<String, Object> metadata;
+    
+    @Expose
+    @SerializedName("antifraud_metadata")
+    private Map<String, Object> antifraudMetadata;
 
-    @Expose(serialize = false)
+	@Expose(serialize = false)
     @SerializedName("event")
     private Event event;
 
@@ -658,6 +662,10 @@ public class Transaction extends PagarMeModel<Integer> {
     public Status getDesiredStatus() {
         return desiredStatus;
     }
+    
+    public Map<String, Object> getAntifraudMetadata() {
+		return antifraudMetadata;
+	}
 
     public void setAsync(final Boolean async) {
         this.async = async;
@@ -731,6 +739,11 @@ public class Transaction extends PagarMeModel<Integer> {
             addUnsavedProperty("splitRules");
         }
     }
+    
+    public void setAntifraudMetadata(Map<String, Object> antifraudMetadata) {
+		this.antifraudMetadata = antifraudMetadata;
+		addUnsavedProperty("metadata");
+	}
 
     public Collection<SplitRule> getSplitRules() {
         return splitRules;

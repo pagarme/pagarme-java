@@ -106,6 +106,23 @@ public class TransactionTest extends BaseTest {
         Assert.assertEquals(transaction.getPaymentMethod(), Transaction.PaymentMethod.CREDIT_CARD);
         Assert.assertEquals(transaction.getStatus(), Transaction.Status.PAID);
     }
+    
+    @Test
+    public void testCreateAndCaptureTransactionAntifraudMetaData() throws Throwable {
+
+        transaction = this.transactionCreditCardCommon();
+        transaction.setCapture(true);
+
+        Map<String, Object> antifraudMetadata =  new HashMap<String, Object>();
+        antifraudMetadata.put("metadata1", "value1");
+        antifraudMetadata.put("metadata2", "value2");
+
+        transaction.setAntifraudMetadata(antifraudMetadata);
+        transaction.save();
+
+        Assert.assertEquals(transaction.getPaymentMethod(), Transaction.PaymentMethod.CREDIT_CARD);
+        Assert.assertEquals(transaction.getStatus(), Transaction.Status.PAID);
+    }
 
     @Test
     public void testCreateAndCaptureTransactionMetaDataInCapture() throws Throwable {
