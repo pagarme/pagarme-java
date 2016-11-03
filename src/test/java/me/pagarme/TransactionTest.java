@@ -120,8 +120,9 @@ public class TransactionTest extends BaseTest {
         transaction.setAntifraudMetadata(antifraudMetadata);
         transaction.save();
 
-        Assert.assertEquals(transaction.getPaymentMethod(), Transaction.PaymentMethod.CREDIT_CARD);
-        Assert.assertEquals(transaction.getStatus(), Transaction.Status.PAID);
+        Assert.assertEquals(transaction.getAntifraudMetadata().get("metadata1"), "value1");
+        Assert.assertEquals(transaction.getAntifraudMetadata().get("metadata2"), "value2");
+        
     }
 
     @Test
