@@ -13,7 +13,7 @@ public class LocalDateAdapter implements JsonDeserializer<LocalDate>, JsonSerial
     private final DateTimeFormatter formatter;
 
     public LocalDateAdapter() {
-        this.formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+        this.formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     }
 
     public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

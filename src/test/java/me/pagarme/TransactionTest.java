@@ -36,6 +36,14 @@ public class TransactionTest extends BaseTest {
         super.setUp();
         transaction = new Transaction();
     }
+    
+    @Test
+    public void testCreatedDateExistence() throws PagarMeException{
+        transaction = this.transactionCreditCardCommon();
+        transaction.save();
+        
+        Assert.assertNotNull(transaction.getCreatedAt());
+    }
 
     @Test
     public void testCreateAndCaptureTransactionWithOfflineDebitCard() throws Throwable {

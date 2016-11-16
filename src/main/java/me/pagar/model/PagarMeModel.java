@@ -74,6 +74,10 @@ public abstract class PagarMeModel<PK extends Serializable> {
     public String getClassName() {
         return className;
     }
+    
+    protected void setCreatedAt(DateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public void setId(final PK id) {
         this.id = id;
