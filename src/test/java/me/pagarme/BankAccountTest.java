@@ -1,30 +1,37 @@
 package me.pagarme;
 
-import me.pagar.model.BankAccount;
+import java.util.Collection;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collection;
+import me.pagar.model.BankAccount;
+import me.pagarme.factory.BankAccountFactory;
 
-public class BankAccountTest extends BankAccountCommon {
+public class BankAccountTest extends BaseTest{
 
+    public BankAccountFactory bankAccountFactory = new BankAccountFactory();
+    
+    public BankAccountTest() {
+        super.setUp();
+    }
+    
     @Test
     public void testCreateBackAccount() {
 
-        bankAccount = this.bankAccountDefault();
-
         try {
-
-            bankAccount.save();
-
-            Assert.assertEquals(bankAccount.getAgencia(), AGENCIA);
-            Assert.assertEquals(bankAccount.getAgenciaDv(), AGENCIA_DV);
-            Assert.assertEquals(bankAccount.getConta(), CONTA);
-            Assert.assertEquals(bankAccount.getContaDv(), CONTA_DV);
-            Assert.assertEquals(bankAccount.getBankCode(), BANK_CODE);
-            Assert.assertEquals(bankAccount.getDocumentNumber(), DOCUMENT_NUMBER);
-            Assert.assertEquals(bankAccount.getLegalName(), LEGAL_NAME);
-
+            
+            BankAccount bankAccount = bankAccountFactory.create();
+            BankAccount savedBankAccount = bankAccount.save();
+            
+            Assert.assertNotNull(savedBankAccount.getId());
+            Assert.assertEquals(savedBankAccount.getAgencia(), BankAccountFactory.DEFAULT_AGENCIA);
+            Assert.assertEquals(savedBankAccount.getAgenciaDv(), BankAccountFactory.DEFAULT_AGENCIA_DV);
+            Assert.assertEquals(savedBankAccount.getConta(), BankAccountFactory.DEFAULT_CONTA);
+            Assert.assertEquals(savedBankAccount.getContaDv(), BankAccountFactory.DEFAULT_CONTA_DV);
+            Assert.assertEquals(savedBankAccount.getBankCode(), BankAccountFactory.DEFAULT_BANK_CODE);
+            Assert.assertEquals(savedBankAccount.getDocumentNumber(), BankAccountFactory.DEFAULT_DOCUMENT_NUMBER);
+            Assert.assertEquals(savedBankAccount.getLegalName(), BankAccountFactory.DEFAULT_LEGAL_NAME);
         } catch (Exception exception) {
             throw new UnsupportedOperationException(exception);
         }
@@ -33,21 +40,22 @@ public class BankAccountTest extends BankAccountCommon {
     @Test
     public void testFindBankAccountById() {
 
-        bankAccount = this.bankAccountDefault();
-
         try {
 
-            bankAccount.save();
-            BankAccount currentBanckAccount = bankAccount.find(bankAccount.getId());
-
-            Assert.assertEquals(currentBanckAccount.getAgencia(), AGENCIA);
-            Assert.assertEquals(currentBanckAccount.getAgenciaDv(), AGENCIA_DV);
-            Assert.assertEquals(currentBanckAccount.getConta(), CONTA);
-            Assert.assertEquals(currentBanckAccount.getContaDv(), CONTA_DV);
-            Assert.assertEquals(currentBanckAccount.getBankCode(), BANK_CODE);
-            Assert.assertEquals(currentBanckAccount.getDocumentNumber(), DOCUMENT_NUMBER);
-            Assert.assertEquals(currentBanckAccount.getLegalName(), LEGAL_NAME);
-
+            BankAccount bankAccount = bankAccountFactory.create();
+            BankAccount savedBankAccount = bankAccount.save();
+            BankAccount foundBanckAccount = new BankAccount().find(bankAccount.getId());
+            
+            Assert.assertNotNull(foundBanckAccount.getId());
+            Assert.assertEquals(savedBankAccount.getId(), foundBanckAccount.getId());
+            Assert.assertEquals(savedBankAccount.getAgencia(), BankAccountFactory.DEFAULT_AGENCIA);
+            Assert.assertEquals(savedBankAccount.getAgenciaDv(), BankAccountFactory.DEFAULT_AGENCIA_DV);
+            Assert.assertEquals(savedBankAccount.getConta(), BankAccountFactory.DEFAULT_CONTA);
+            Assert.assertEquals(savedBankAccount.getContaDv(), BankAccountFactory.DEFAULT_CONTA_DV);
+            Assert.assertEquals(savedBankAccount.getBankCode(), BankAccountFactory.DEFAULT_BANK_CODE);
+            Assert.assertEquals(savedBankAccount.getDocumentNumber(), BankAccountFactory.DEFAULT_DOCUMENT_NUMBER);
+            Assert.assertEquals(savedBankAccount.getLegalName(), BankAccountFactory.DEFAULT_LEGAL_NAME);
+            
         } catch (Exception exception) {
             throw new UnsupportedOperationException(exception);
         }
@@ -56,26 +64,27 @@ public class BankAccountTest extends BankAccountCommon {
     @Test
     public void testFindBankAccountCollection() {
 
-        bankAccount = this.bankAccountDefault();
-
         try {
 
+            BankAccount bankAccount = bankAccountFactory.create();
             bankAccount.save();
-            Collection<BankAccount> currentBanckAccount = bankAccount.findCollection(1,0);
+            BankAccount otherBankAccount = bankAccountFactory.create();
+            otherBankAccount.save();
+            
+            Collection<BankAccount> currentBanckAccount = bankAccount.findCollection(2,0);
 
-            Assert.assertEquals(currentBanckAccount.size(), 1);
+            Assert.assertEquals(currentBanckAccount.size(), 2);
 
-            for (BankAccount bankAccount : currentBanckAccount) {
-
-                Assert.assertEquals(bankAccount.getAgencia(), AGENCIA);
-                Assert.assertEquals(bankAccount.getAgenciaDv(), AGENCIA_DV);
-                Assert.assertEquals(bankAccount.getConta(), CONTA);
-                Assert.assertEquals(bankAccount.getContaDv(), CONTA_DV);
-                Assert.assertEquals(bankAccount.getBankCode(), BANK_CODE);
-                Assert.assertEquals(bankAccount.getDocumentNumber(), DOCUMENT_NUMBER);
-                Assert.assertEquals(bankAccount.getLegalName(), LEGAL_NAME);
+            for (BankAccount bankAccountVar : currentBanckAccount) {
+                Assert.assertNotNull(bankAccountVar.getId());
+                Assert.assertEquals(bankAccountVar.getAgencia(), BankAccountFactory.DEFAULT_AGENCIA);
+                Assert.assertEquals(bankAccountVar.getAgenciaDv(), BankAccountFactory.DEFAULT_AGENCIA_DV);
+                Assert.assertEquals(bankAccountVar.getConta(), BankAccountFactory.DEFAULT_CONTA);
+                Assert.assertEquals(bankAccountVar.getContaDv(), BankAccountFactory.DEFAULT_CONTA_DV);
+                Assert.assertEquals(bankAccountVar.getBankCode(), BankAccountFactory.DEFAULT_BANK_CODE);
+                Assert.assertEquals(bankAccountVar.getDocumentNumber(), BankAccountFactory.DEFAULT_DOCUMENT_NUMBER);
+                Assert.assertEquals(bankAccountVar.getLegalName(), BankAccountFactory.DEFAULT_LEGAL_NAME);
             }
-
         } catch (Exception exception) {
             throw new UnsupportedOperationException(exception);
         }

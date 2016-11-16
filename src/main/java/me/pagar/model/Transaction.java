@@ -414,13 +414,12 @@ public class Transaction extends PagarMeModel<Integer> {
     @SerializedName("refuse_reason")
     private String refuseReason;
 
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     @SerializedName("split_rules")
     private Collection<SplitRule> splitRules;
 
     public Transaction() {
         super();
-        this.splitRules = new ArrayList<SplitRule>();
     }
 
     /**
@@ -1080,6 +1079,7 @@ public class Transaction extends PagarMeModel<Integer> {
         this.authorizedAmount = other.authorizedAmount;
         this.refuseReason = other.refuseReason;
         this.antifraudMetadata = other.antifraudMetadata;
+        this.splitRules = other.splitRules;
         this.setCreatedAt(other.getCreatedAt());
     }
 

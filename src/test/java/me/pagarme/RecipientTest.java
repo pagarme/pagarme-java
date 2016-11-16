@@ -1,112 +1,75 @@
 package me.pagarme;
 
 
-import org.junit.Assert;
-import org.junit.Test;
-import me.pagar.model.BankAccount;
-import me.pagar.model.PagarMeException;
-import me.pagar.model.Recipient;
-
 import java.util.Collection;
 
-public class RecipientTest extends RecipientCommon {
+import org.junit.Assert;
+import org.junit.Test;
 
-    BankAccount bankAccount;
+import me.pagar.model.PagarMeException;
+import me.pagar.model.Recipient;
+import me.pagarme.factory.BankAccountFactory;
+import me.pagarme.factory.RecipientFactory;
 
+public class RecipientTest extends BaseTest{
+
+    public BankAccountFactory bankAccountFactory = new BankAccountFactory();
+    public RecipientFactory recipientFactory = new RecipientFactory();
+    
+    public RecipientTest() {
+        super.setUp();
+    }
+    
     @Test
-    public void testCreateRecipient() {
+    public void testCreateRecipient() throws PagarMeException {
 
-        int bankAccountId = this.getBankAccountId();
-
-        recipient = this.recipientDefault();
+        int bankAccountId = bankAccountFactory.create().save().getId();
+        Recipient recipient = recipientFactory.create();
         recipient.setBankAccountId(bankAccountId);
 
-        try {
-            recipient.save();
-            Assert.assertEquals(recipient.getTransferInterval(), Recipient.TransferInterval.WEEKLY);
-            Assert.assertEquals(recipient.isTransferEnabled(), TRANSFER_ENABLE);
+        recipient.save();
+        Assert.assertEquals(recipient.getTransferInterval(), RecipientFactory.DEFAULT_TRANSFER_INTERVAL);
+        Assert.assertEquals(recipient.isTransferEnabled(), RecipientFactory.DEFAULT_TRANSFER_ENABLED);
+
+        int recipientBankAccountId = recipient.getBankAccount().getId();
+        Assert.assertEquals(recipientBankAccountId, bankAccountId);
+    }
+
+    @Test
+    public void testRecipientFind() throws PagarMeException {
+
+        int bankAccountId = bankAccountFactory.create().save().getId();
+        Recipient recipient = recipientFactory.create();
+        recipient.setBankAccountId(bankAccountId);
+        recipient.save();
+        recipient.find(recipient.getId());
+
+        Assert.assertEquals(recipient.getTransferInterval(), RecipientFactory.DEFAULT_TRANSFER_INTERVAL);
+        Assert.assertEquals(recipient.isTransferEnabled(), RecipientFactory.DEFAULT_TRANSFER_ENABLED);
+
+        int recipientBankAccountId = recipient.getBankAccount().getId();
+        Assert.assertEquals(recipientBankAccountId, bankAccountId);
+
+    }
+
+    @Test
+    public void testRecipientFindCollection() throws PagarMeException {
+
+        int bankAccountId = bankAccountFactory.create().save().getId();
+        Recipient newRecipient = recipientFactory.create();
+        newRecipient.setBankAccountId(bankAccountId);
+        newRecipient.save();
+        Collection<Recipient> recipientCollection =  newRecipient.findCollection(1,0);
+
+        Assert.assertEquals(1, recipientCollection.size());
+        for (Recipient recipient : recipientCollection) {
+            Assert.assertEquals(recipient.getTransferInterval(), RecipientFactory.DEFAULT_TRANSFER_INTERVAL);
+            Assert.assertEquals(recipient.isTransferEnabled(), RecipientFactory.DEFAULT_TRANSFER_ENABLED);
 
             int recipientBankAccountId = recipient.getBankAccount().getId();
             Assert.assertEquals(recipientBankAccountId, bankAccountId);
-
-        }  catch (PagarMeException exception) {
-            throw new UnsupportedOperationException(exception);
         }
-    }
 
-    @Test
-    public void testRecipientFind() {
-
-        int bankAccountId = this.getBankAccountId();
-
-        recipient = this.recipientDefault();
-        recipient.setBankAccountId(bankAccountId);
-
-        try {
-
-            recipient.save();
-            recipient.find(recipient.getId());
-
-            Assert.assertEquals(recipient.getTransferInterval(), Recipient.TransferInterval.WEEKLY);
-            Assert.assertEquals(recipient.isTransferEnabled(), TRANSFER_ENABLE);
-
-            int recipientBankAccountId = recipient.getBankAccount().getId();
-            Assert.assertEquals(recipientBankAccountId, bankAccountId);
-
-        }  catch (PagarMeException exception) {
-            throw new UnsupportedOperationException(exception);
-        }
-    }
-
-    @Test
-    public void testRecipientFindCollection() {
-
-        int bankAccountId = this.getBankAccountId();
-
-        recipient = this.recipientDefault();
-        recipient.setBankAccountId(bankAccountId);
-
-        try {
-
-            recipient.save();
-            Collection<Recipient> recipientCollection =  recipient.findCollection(1,0);
-
-            for (Recipient recipient : recipientCollection) {
-                Assert.assertEquals(recipient.getTransferInterval(), Recipient.TransferInterval.WEEKLY);
-                Assert.assertEquals(recipient.isTransferEnabled(), TRANSFER_ENABLE);
-
-                int recipientBankAccountId = recipient.getBankAccount().getId();
-                Assert.assertEquals(recipientBankAccountId, bankAccountId);
-            }
-
-        }  catch (PagarMeException exception) {
-            throw new UnsupportedOperationException(exception);
-        }
-    }
-
-    /**
-     *
-     * @return
-     */
-    private Integer getBankAccountId() {
-
-        bankAccount = new BankAccount();
-        bankAccount.setAgencia(AGENCIA);
-        bankAccount.setAgenciaDv(AGENCIA_DV);
-        bankAccount.setConta(CONTA);
-        bankAccount.setContaDv(CONTA_DV);
-        bankAccount.setBankCode(BANK_CODE);
-        bankAccount.setDocumentNumber(DOCUMENT_NUMBER);
-        bankAccount.setLegalName(LEGAL_NAME);
-
-        try {
-
-            bankAccount.save();
-            return bankAccount.getId();
-
-        } catch (PagarMeException exception) {
-            throw new UnsupportedOperationException(exception);
-        }
     }
 
 }

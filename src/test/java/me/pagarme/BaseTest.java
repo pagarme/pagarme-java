@@ -1,9 +1,14 @@
 package me.pagarme;
 
-import me.pagar.model.*;
-import org.junit.Assert;
-import org.omg.CORBA.Object;
 import org.joda.time.LocalDate;
+import org.junit.Assert;
+
+import me.pagar.model.Address;
+import me.pagar.model.CompaniesTempory;
+import me.pagar.model.Customer;
+import me.pagar.model.PagarMe;
+import me.pagar.model.Phone;
+import me.pagar.model.Transaction;
 
 public abstract class BaseTest {
 
@@ -20,13 +25,6 @@ public abstract class BaseTest {
     protected static String ZIP_CODE = "04840110";
     protected static String PHONE_DDD = "11";
     protected static String PHONE_NUMBER = "55284132";
-
-    protected static String AGENCIA = "0192";
-    protected static String AGENCIA_DV = "0";
-    protected static String CONTA = "03245";
-    protected static String CONTA_DV = "0";
-    protected static String BANK_CODE = "0341";
-    protected static String LEGAL_NAME = "Java Lib Bank Account";
 
     protected static Integer TRANSFER_DAY = 1;
     protected static Boolean TRANSFER_ENABLE = true;
