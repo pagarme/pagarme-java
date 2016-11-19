@@ -92,7 +92,7 @@ public class Transaction extends PagarMeModel<Integer> {
 
     @Expose
     @SerializedName("card_emv_response")
-    private String cardEmvResponse;	
+    private String cardEmvResponse;
 
     @Expose(deserialize = false)
     @SerializedName("card_pin_mode")
@@ -809,8 +809,6 @@ public class Transaction extends PagarMeModel<Integer> {
     public CardHashKey cardHashKey() throws PagarMeException {
         final String cardHashKeyEndpoint = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,
                 CardHashKey.class.getSimpleName());
-
-        System.out.println(String.format("/%s/%s", getClassName(), cardHashKeyEndpoint));
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s", getClassName(), cardHashKeyEndpoint));

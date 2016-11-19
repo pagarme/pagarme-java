@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.google.gson.JsonObject;
 
 import me.pagar.model.Address;
+import me.pagar.model.CardHashKey;
 import me.pagar.model.Customer;
 import me.pagar.model.PagarMeException;
 import me.pagar.model.Phone;
@@ -34,12 +35,12 @@ public class TransactionTest extends BaseTest {
         super.setUp();
         transaction = new Transaction();
     }
-    
+
     @Test
     public void testCreatedDateExistence() throws PagarMeException{
         transaction = this.transactionCreditCardCommon();
         transaction.save();
-        
+
         Assert.assertNotNull(transaction.getCreatedAt());
     }
 
@@ -75,7 +76,7 @@ public class TransactionTest extends BaseTest {
         Assert.assertEquals(transaction.getPaymentMethod(), Transaction.PaymentMethod.DEBIT_CARD);
         Assert.assertEquals(transaction.getStatus(), Transaction.Status.PAID);
     }
-    
+
     @Test
     public void testCreateAndCaptureTransactionWithCardEmv() throws Throwable {
 
@@ -88,7 +89,7 @@ public class TransactionTest extends BaseTest {
         transaction.save();
 
         Assert.assertNotNull(transaction.getCardEmvResponse());
-        
+
     }
 
     @Test
@@ -162,7 +163,7 @@ public class TransactionTest extends BaseTest {
         Assert.assertEquals(antifraudMetadataRes.get("antifraudMetadata1"), "value1");
         Assert.assertEquals(antifraudMetadataRes.get("antifraudMetadata2"), "value2");
     }
-    
+
     @Test
     public void testCreateAndCaptureTransactionAntifraudMetaDataPojo() throws Throwable {
 
@@ -373,7 +374,7 @@ public class TransactionTest extends BaseTest {
         transaction.setAmount(10000);
 
         Collection<SplitRule> splitRules = new ArrayList<SplitRule>();
-        
+
         Recipient recipient1 = recipientFactory.create();
         recipient1.save();
         SplitRule splitRule = new SplitRule();
@@ -394,11 +395,20 @@ public class TransactionTest extends BaseTest {
         splitRules.add(splitRule2);
         transaction.setSplitRules(splitRules);
         transaction.save();
-        
+
         Transaction foundTransaction = new Transaction().find(transaction.getId());
         Collection<SplitRule> foundSplitRules = foundTransaction.getSplitRules();
         Assert.assertEquals(splitRules.size(), foundSplitRules.size());
-        
+
+    }
+
+    @Test
+    public void testGetCardHashKey() throws Throwable {
+
+        Transaction transaction = new Transaction();
+        CardHashKey cardHashKey = transaction.cardHashKey();
+
+        Assert.assertNotNull(cardHashKey.getPublicKey());
     }
 //
 //    private String getRecipientId(Boolean documentNumber) {
