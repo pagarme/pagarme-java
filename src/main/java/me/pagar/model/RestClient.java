@@ -153,7 +153,7 @@ public class RestClient {
                     method.equalsIgnoreCase(HttpMethod.DELETE)) {
                 httpClient.setDoOutput(true);
 
-                if (parameters.size() > 1) {
+                if (parameters.size() >= 1) {
                     final byte[] payload = JSONUtils.getInterpreter().toJson(parameters).getBytes();
                     httpClient.addRequestProperty("Content-Type", "application/json");
                     httpClient.addRequestProperty("Content-Length", String.valueOf(payload.length));
