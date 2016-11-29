@@ -1,6 +1,18 @@
 package me.pagar.model;
 
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ws.rs.HttpMethod;
+
+import org.atteo.evo.inflector.English;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.google.common.base.CaseFormat;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -8,21 +20,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import me.pagar.util.JSONUtils;
-import me.pagar.util.LocalDateAdapter;
+
 import me.pagar.util.DateTimeAdapter;
 import me.pagar.util.JSONUtils;
 import me.pagar.util.LocalDateAdapter;
-import org.atteo.evo.inflector.English;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import javax.ws.rs.HttpMethod;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class PagarMeModel<PK extends Serializable> {
 
@@ -108,6 +109,11 @@ public abstract class PagarMeModel<PK extends Serializable> {
     }
 
     protected JsonArray paginate(final Integer totalPerPage, Integer page) throws PagarMeException {
+        String path = String.format("/%s", className);
+        return paginate(path, totalPerPage, page, null);
+    }
+    
+    protected JsonArray paginate(String path, final Integer totalPerPage, Integer page, final Map<String, Object> filters) throws PagarMeException {
         final Map<String, Object> parameters = new HashMap<String, Object>();
 
         if (null != totalPerPage && 0 != totalPerPage) {
@@ -120,8 +126,12 @@ public abstract class PagarMeModel<PK extends Serializable> {
 
         parameters.put("page", page);
 
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s", className));
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
         request.getParameters().putAll(parameters);
+        
+        if (filters != null) {
+            request.getParameters().putAll(filters);
+        }
 
         return request.execute();
     }
