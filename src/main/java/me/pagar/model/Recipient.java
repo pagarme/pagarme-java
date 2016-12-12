@@ -1,14 +1,19 @@
 package me.pagar.model;
 
+import java.util.Collection;
+import java.util.Map;
+
+import javax.ws.rs.HttpMethod;
+
+import org.joda.time.DateTime;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import me.pagar.util.JSONUtils;
-import org.joda.time.DateTime;
 
-import javax.ws.rs.HttpMethod;
-import java.util.Collection;
+import me.pagar.util.JSONUtils;
 
 public class Recipient  extends PagarMeModel<String> {
 
@@ -143,6 +148,50 @@ public class Recipient  extends PagarMeModel<String> {
                 String.format("/%s/%s/%s", getClassName(), getId(), Balance.class.getSimpleName().toLowerCase()));
 
         return JSONUtils.getAsObject((JsonObject) request.execute(), Balance.class);
+    }
+
+    public BulkAnticipation anticipate(BulkAnticipation anticipation) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/%s", getClassName(), getId(), anticipation.getClassName());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
+        JsonObject response = request.execute();
+        BulkAnticipation newAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
+        return newAnticipation;
+    }
+
+    public BulkAnticipationLimits getLimits(BulkAnticipation anticipationParameters) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/bulk_anticipations/limits", getClassName(), getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
+        Map<String, Object> parameters = JSONUtils.objectToMap(anticipationParameters);
+        request.getParameters().putAll(parameters);
+        JsonObject response = request.execute();
+        BulkAnticipationLimits limits = JSONUtils.getAsObject(response, BulkAnticipationLimits.class);
+        return limits;
+    }
+
+    public BulkAnticipation cancelAnticipation(BulkAnticipation anticipation) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/%s/%s/cancel", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
+        JsonObject response = request.execute();
+        BulkAnticipation canceledAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
+        return canceledAnticipation;
+    }
+
+    public Collection<BulkAnticipation> findAnticipations(Integer count, Integer page) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/bulk_anticipations", getClassName(), getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
+        if(count != null){
+            request.getParameters().put("count", count);
+        }
+        if(page != null){
+            request.getParameters().put("page", page);
+        }
+        JsonArray response = request.<JsonArray>execute();
+        Collection<BulkAnticipation> anticipations = JSONUtils.getAsList(response, new TypeToken<Collection<BulkAnticipation>>(){}.getType());
+        return anticipations;
     }
 
     public Recipient refresh() throws PagarMeException {
