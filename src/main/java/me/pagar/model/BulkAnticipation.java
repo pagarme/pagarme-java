@@ -1,5 +1,8 @@
 package me.pagar.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.joda.time.DateTime;
 
 import com.google.gson.annotations.Expose;
@@ -58,32 +61,33 @@ public class BulkAnticipation extends PagarMeModel<String> {
         return anticipationFee;
     }
 
-    public class LimitParameters{
-        public void setPaymentDate(DateTime paymentDate){
-            BulkAnticipation.this.paymentDate = paymentDate;
-        }
-
-        public void setTimeFrame(Timeframe timeframe){
-            BulkAnticipation.this.timeframe = timeframe;
-        }
+    public void setRequiredParametersForAnticipationLimit(DateTime paymentDate, Timeframe timeframe){
+        this.paymentDate = paymentDate;
+        this.timeframe = timeframe;
     }
 
-    public class CreateParameters{
-        public void setPaymentDate(DateTime paymentDate){
-            BulkAnticipation.this.paymentDate = paymentDate;
-        }
+    public void setRequiredParametersForCreation(DateTime paymentDate, Timeframe timeframe, Integer requestedAmount, Boolean building){
+        this.paymentDate = paymentDate;
+        this.timeframe = timeframe;
+        this.requestedAmount = requestedAmount;
+        this.building = building;
+    }
 
-        public void setTimeFrame(Timeframe timeframe){
-            BulkAnticipation.this.timeframe = timeframe;
+    public Map<String, Object> toMap(){
+        HashMap<String, Object> mappedThis = new HashMap<String, Object>();
+        if(this.paymentDate != null){
+            mappedThis.put("payment_date", this.paymentDate.getMillis());
         }
-
-        public void setRequestedAmount(Integer requestedAmount) {
-            BulkAnticipation.this.requestedAmount = requestedAmount;
+        if(this.timeframe != null){
+            mappedThis.put("timeframe", this.timeframe.name().toLowerCase());
         }
-
-        public void setBuilding(Boolean building) {
-            BulkAnticipation.this.building = building;
+        if(this.building != null){
+            mappedThis.put("building", this.building.toString());
         }
+        if(this.requestedAmount != null){
+            mappedThis.put("requested_amount", requestedAmount);
+        }
+        return mappedThis;
     }
 
     public enum Status{

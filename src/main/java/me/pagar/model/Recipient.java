@@ -25,7 +25,7 @@ public class Recipient  extends PagarMeModel<String> {
     @SerializedName(value = "transfer_enabled")
     private Boolean transferEnabled;
 
-    @Expose(serialize = false)
+    @Expose
     @SerializedName(value = "anticipatable_volume_percentage")
     private Integer anticipatableVolumePercentage;
 
@@ -119,6 +119,10 @@ public class Recipient  extends PagarMeModel<String> {
         addUnsavedProperty("transferInterval");
     }
 
+    public void setAnticipatableVolumePercentage(Integer anticipatableVolumePercentage) {
+        this.anticipatableVolumePercentage = anticipatableVolumePercentage;
+    }
+
     public Recipient save() throws PagarMeException {
         final Recipient saved = super.save(getClass());
         copy(saved);
@@ -154,17 +158,19 @@ public class Recipient  extends PagarMeModel<String> {
         validateId();
         String path = String.format("/%s/%s/%s", getClassName(), getId(), anticipation.getClassName());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
+        Map<String, Object> parameters = anticipation.toMap();
+        request.setParameters(parameters);
         JsonObject response = request.execute();
         BulkAnticipation newAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
         return newAnticipation;
     }
 
-    public BulkAnticipationLimits getLimits(BulkAnticipation anticipationParameters) throws PagarMeException{
+    public BulkAnticipationLimits getAnticipationLimits(BulkAnticipation anticipationParameters) throws PagarMeException{
         validateId();
         String path = String.format("/%s/%s/bulk_anticipations/limits", getClassName(), getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
-        Map<String, Object> parameters = JSONUtils.objectToMap(anticipationParameters);
-        request.getParameters().putAll(parameters);
+        Map<String, Object> parameters = anticipationParameters.toMap();
+        request.setParameters(parameters);
         JsonObject response = request.execute();
         BulkAnticipationLimits limits = JSONUtils.getAsObject(response, BulkAnticipationLimits.class);
         return limits;
