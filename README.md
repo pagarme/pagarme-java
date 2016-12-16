@@ -125,5 +125,67 @@ Customer customer = new Customer();
 customer.findCollection(10,0);
 ```
 
+## Subscription
+
+### Create plan
+```java
+Plan plan = new Plan();
+plan.setTrialDays(0);
+plan.setDays(30);
+plan.setAmount(amount);
+plan.setName("Test Plan Pagarme");
+plan.save();
+```
+
+### Find plan
+```java
+Integer planId = 999;
+Plan plan = new Plan();
+plan.find(planId);
+```
+
+### List plan collection
+```java
+Plan plan = new Plan();
+plan.list(10,0);
+```
+
+### Create subscription
+```java
+Subscription subscription = new Subscription();
+subscription.setCustomer(customer);
+subscription.setPlanId(plan.getId());
+subscription.setCardId(card.getId());
+```
+
+### Find subscription
+```java
+Integer subscriptionId = 999;
+Subscription subscription = new Subscription();
+subscription.find(subscriptionId);
+```
+
+### List subscription collection
+```java
+Subscription subscription = new Subscription();
+subscription.list(10,0);
+```
+
+### Cancel subscription
+```java
+Integer subscriptionId = 999;
+Subscription subscription = new Subscription();
+subscription.find(subscriptionId);
+subscription.cancel();
+```
+
+### List all subscription transactions
+```java
+Integer subscriptionId = 999;
+Subscription subscription = new Subscription();
+subscription.find(subscriptionId);
+subscription.transactions();
+```
+
 ### Agradecimento
 development based on library pagarme-java [Adriano Luis](https://github.com/adrianoluis)
