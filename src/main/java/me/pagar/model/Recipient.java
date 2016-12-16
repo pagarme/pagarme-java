@@ -1,11 +1,14 @@
 package me.pagar.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.HttpMethod;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -13,6 +16,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
+import me.pagar.model.BulkAnticipation.Timeframe;
 import me.pagar.util.JSONUtils;
 
 public class Recipient  extends PagarMeModel<String> {
@@ -165,11 +169,26 @@ public class Recipient  extends PagarMeModel<String> {
         return newAnticipation;
     }
 
-    public BulkAnticipationLimits getAnticipationLimits(BulkAnticipation anticipationParameters) throws PagarMeException{
+    public Limit getMaxAnticipationLimit(DateTime paymentDate, Timeframe timeframe) throws PagarMeException{
+        BulkAnticipationLimits limits = getAnticipationLimits(paymentDate, timeframe);
+        Limit max = limits.getMaximum();
+        return max;
+    }
+
+    public Limit getMinAnticipationLimit(DateTime paymentDate, Timeframe timeframe) throws PagarMeException{
+        BulkAnticipationLimits limits = getAnticipationLimits(paymentDate, timeframe);
+        Limit min = limits.getMinimum();
+        return min;
+    }
+
+    private BulkAnticipationLimits getAnticipationLimits(DateTime paymentDate, Timeframe timeframe) throws PagarMeException{
         validateId();
         String path = String.format("/%s/%s/bulk_anticipations/limits", getClassName(), getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
-        Map<String, Object> parameters = anticipationParameters.toMap();
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("payment_date", formatter.print(paymentDate));
+        parameters.put("timeframe", timeframe.name().toLowerCase());
         request.setParameters(parameters);
         JsonObject response = request.execute();
         BulkAnticipationLimits limits = JSONUtils.getAsObject(response, BulkAnticipationLimits.class);

@@ -7,21 +7,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import me.pagar.model.Balance;
 import me.pagar.model.BulkAnticipation;
 import me.pagar.model.BulkAnticipation.Timeframe;
-import me.pagar.model.BulkAnticipationLimits;
+import me.pagar.model.Limit;
 import me.pagar.model.PagarMe;
 import me.pagar.model.PagarMeException;
 import me.pagar.model.Recipient;
 import me.pagar.model.Transaction;
-import me.pagarme.factory.RecipientFactory;
 import me.pagarme.factory.TransactionFactory;
 import me.pagarme.helper.TestEndpoints;
 
 public class AnticipationTest extends BaseTest {
 
-    private RecipientFactory recipientFactory = new RecipientFactory();
     private TransactionFactory transactionFactory = new TransactionFactory();
     private Recipient defaultRecipient;
     private TestEndpoints testEndpoints = new TestEndpoints();
@@ -37,18 +34,21 @@ public class AnticipationTest extends BaseTest {
     }
 
     @Test
-    public void testAnticipationLimit() throws PagarMeException{
-        BulkAnticipation parameters = new BulkAnticipation();
-        parameters.setRequiredParametersForAnticipationLimit(new DateTime().plusDays(10), Timeframe.START);
-        BulkAnticipationLimits limits = defaultRecipient.getAnticipationLimits(parameters);
+    public void testMaxAnticipationLimit() throws PagarMeException{
+        Limit limit = defaultRecipient.getMaxAnticipationLimit(new DateTime().plusDays(10), Timeframe.START);
 
-        Assert.assertEquals(Integer.valueOf(0), limits.getMaximum().getAmount());
-        Assert.assertEquals(Integer.valueOf(0), limits.getMaximum().getAnticipationFee());
-        Assert.assertEquals(Integer.valueOf(0), limits.getMaximum().getFee());
-        Assert.assertEquals(Integer.valueOf(0), limits.getMinimum().getAmount());
-        Assert.assertEquals(Integer.valueOf(0), limits.getMinimum().getAmount());
-        Assert.assertEquals(Integer.valueOf(0), limits.getMinimum().getAmount());
-        
+        Assert.assertEquals(Integer.valueOf(0), limit.getAmount());
+        Assert.assertEquals(Integer.valueOf(0), limit.getAnticipationFee());
+        Assert.assertEquals(Integer.valueOf(0), limit.getFee());
+    }
+
+    @Test
+    public void testMinAnticipationLimit() throws PagarMeException{
+        Limit limit = defaultRecipient.getMinAnticipationLimit(new DateTime().plusDays(10), Timeframe.START);
+
+        Assert.assertEquals(Integer.valueOf(0), limit.getAmount());
+        Assert.assertEquals(Integer.valueOf(0), limit.getAnticipationFee());
+        Assert.assertEquals(Integer.valueOf(0), limit.getFee());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class AnticipationTest extends BaseTest {
         transaction.save();
         testEndpoints.payBoleto(transaction);
 
-        Balance balance = defaultRecipient.balance();
+        defaultRecipient.balance();
 
         BulkAnticipation anticipation = new BulkAnticipation();
         anticipation.setRequiredParametersForCreation(new DateTime().plusDays(3), Timeframe.START, 12345678, false);
