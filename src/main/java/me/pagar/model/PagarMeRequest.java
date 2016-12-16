@@ -13,21 +13,19 @@ public class PagarMeRequest extends PagarMe {
 
     private final String method;
 
-    private final boolean live;
-
     private Map<String, Object> parameters;
 
     private Map<String, String> headers;
 
     public PagarMeRequest(String method, String path) {
-        this(method, path, true);
-    }
-
-    public PagarMeRequest(String method, String path, boolean live) {
         this.path = path;
         this.method = method;
-        this.live = live;
         this.parameters = new HashMap<String, Object>();
+    }
+
+    @Deprecated
+    public PagarMeRequest(String method, String path, boolean live) {
+        this(method, path);
     }
 
     @SuppressWarnings("unchecked")

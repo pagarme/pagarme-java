@@ -812,8 +812,6 @@ public class Transaction extends PagarMeModel<Integer> {
         final String cardHashKeyEndpoint = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,
                 CardHashKey.class.getSimpleName());
 
-        System.out.println(String.format("/%s/%s", getClassName(), cardHashKeyEndpoint));
-
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s", getClassName(), cardHashKeyEndpoint));
 

@@ -129,9 +129,6 @@ public class Customer extends PagarMeModel<Integer>{
 
     public void setBornAt(final LocalDate bornAt) {
         this.bornAt = bornAt;
-
-        System.out.println(this.bornAt);
-
         if (bornAt != null) {
             addUnsavedProperty("bornAt");
         }
