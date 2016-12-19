@@ -20,14 +20,16 @@ public class BulkAnticipation extends PagarMeModel<String> {
     private Integer anticipationFee;
 
     @Expose
+    private Boolean building;
+    @Expose
     private DateTime paymentDate;
     @Expose
     private Timeframe timeframe;
 
     @Expose(deserialize=false)
-    private Boolean building;
-    @Expose(deserialize=false)
     private Integer requestedAmount;
+    @Expose(deserialize = false)
+    private Boolean build;
 
     public DateTime getPaymentDate() {
         return paymentDate;
@@ -61,16 +63,26 @@ public class BulkAnticipation extends PagarMeModel<String> {
         return anticipationFee;
     }
 
+    public Boolean getBuild() {
+        return build;
+    }
+
     public void setRequiredParametersForAnticipationLimit(DateTime paymentDate, Timeframe timeframe){
         this.paymentDate = paymentDate;
         this.timeframe = timeframe;
     }
 
-    public void setRequiredParametersForCreation(DateTime paymentDate, Timeframe timeframe, Integer requestedAmount, Boolean building){
+    public void setRequiredParametersForCreation(DateTime paymentDate, Timeframe timeframe, Integer requestedAmount, Boolean build){
         this.paymentDate = paymentDate;
         this.timeframe = timeframe;
         this.requestedAmount = requestedAmount;
-        this.building = building;
+        //???
+        if(build){
+            this.build = build;
+        }else{
+            this.building = build;
+        }
+        
     }
 
     public Map<String, Object> toMap(){
@@ -81,8 +93,8 @@ public class BulkAnticipation extends PagarMeModel<String> {
         if(this.timeframe != null){
             mappedThis.put("timeframe", this.timeframe.name().toLowerCase());
         }
-        if(this.building != null){
-            mappedThis.put("building", this.building.toString());
+        if(this.build != null){
+            mappedThis.put("build", this.build.toString());
         }
         if(this.requestedAmount != null){
             mappedThis.put("requested_amount", requestedAmount);
@@ -93,7 +105,10 @@ public class BulkAnticipation extends PagarMeModel<String> {
     public enum Status{
 
         @SerializedName("building")
-        BUILDING, PENDING, 
+        BUILDING, 
+
+        @SerializedName("pending")
+        PENDING, 
 
         @SerializedName("aproved")
         APPROVED, 

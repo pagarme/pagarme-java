@@ -158,17 +158,6 @@ public class Recipient  extends PagarMeModel<String> {
         return JSONUtils.getAsObject((JsonObject) request.execute(), Balance.class);
     }
 
-    public BulkAnticipation anticipate(BulkAnticipation anticipation) throws PagarMeException{
-        validateId();
-        String path = String.format("/%s/%s/%s", getClassName(), getId(), anticipation.getClassName());
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
-        Map<String, Object> parameters = anticipation.toMap();
-        request.setParameters(parameters);
-        JsonObject response = request.execute();
-        BulkAnticipation newAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
-        return newAnticipation;
-    }
-
     public Limit getMaxAnticipationLimit(DateTime paymentDate, Timeframe timeframe) throws PagarMeException{
         BulkAnticipationLimits limits = getAnticipationLimits(paymentDate, timeframe);
         Limit max = limits.getMaximum();
@@ -185,14 +174,31 @@ public class Recipient  extends PagarMeModel<String> {
         validateId();
         String path = String.format("/%s/%s/bulk_anticipations/limits", getClassName(), getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("payment_date", formatter.print(paymentDate));
+        parameters.put("payment_date", paymentDate.getMillis());
         parameters.put("timeframe", timeframe.name().toLowerCase());
         request.setParameters(parameters);
         JsonObject response = request.execute();
         BulkAnticipationLimits limits = JSONUtils.getAsObject(response, BulkAnticipationLimits.class);
         return limits;
+    }
+
+    public BulkAnticipation anticipate(BulkAnticipation anticipation) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/%s", getClassName(), getId(), anticipation.getClassName());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
+        Map<String, Object> parameters = anticipation.toMap();
+        request.setParameters(parameters);
+        JsonObject response = request.execute();
+        BulkAnticipation newAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
+        return newAnticipation;
+    }
+
+    public void deleteAnticipation(BulkAnticipation anticipation) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/%s/%s", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.DELETE, path);
+        request.execute();
     }
 
     public BulkAnticipation cancelAnticipation(BulkAnticipation anticipation) throws PagarMeException{
@@ -204,6 +210,14 @@ public class Recipient  extends PagarMeModel<String> {
         return canceledAnticipation;
     }
 
+    public BulkAnticipation confirmBulkAnticipation(BulkAnticipation anticipation) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/%s/%s/confirm", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
+        JsonObject response = request.execute();
+        BulkAnticipation confirmedAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
+        return confirmedAnticipation;
+    }
     public Collection<BulkAnticipation> findAnticipations(Integer count, Integer page) throws PagarMeException{
         validateId();
         String path = String.format("/%s/%s/bulk_anticipations", getClassName(), getId());
