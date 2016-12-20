@@ -61,7 +61,7 @@ public class AnticipationTest extends BaseTest {
         Assert.assertNotNull(anticipation.getAnticipationFee());
         Assert.assertNotNull(anticipation.getCreatedAt());
         Assert.assertNotNull(anticipation.getFee());
-        Assert.assertNotNull(anticipation.getStatus());
+        Assert.assertEquals(Status.PENDING, anticipation.getStatus());
     }
 
     @Test

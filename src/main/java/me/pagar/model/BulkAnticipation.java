@@ -76,13 +76,9 @@ public class BulkAnticipation extends PagarMeModel<String> {
         this.paymentDate = paymentDate;
         this.timeframe = timeframe;
         this.requestedAmount = requestedAmount;
-        //???
         if(build){
             this.build = build;
-        }else{
-            this.building = build;
         }
-        
     }
 
     public Map<String, Object> toMap(){
