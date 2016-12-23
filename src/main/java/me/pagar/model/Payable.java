@@ -66,7 +66,7 @@ public class Payable extends PagarMeModel<Integer> {
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 
-        final Payable other = JSONUtils.getAsObject((JsonObject) request.execute(), Payable.class);
+        final Payable other = new JSONUtils().getAsObject((JsonObject) request.execute(), Payable.class);
         copy(other);
         flush();
 
@@ -75,13 +75,13 @@ public class Payable extends PagarMeModel<Integer> {
 
     public Collection<Payable> findCollection(final Integer totalPerPage, Integer page) throws PagarMeException {
         JsonArray response = super.paginate(totalPerPage, page);
-        return JSONUtils.getAsList(response, new TypeToken<Collection<Payable>>() {
+        return new JSONUtils().getAsList(response, new TypeToken<Collection<Payable>>() {
         }.getType());
     }
 
     public Collection<Payable> findCollection(final Integer totalPerPage, Integer page, QueriableFields payableFilter) throws PagarMeException {
         JsonArray response = super.paginate(totalPerPage, page, payableFilter);
-        return JSONUtils.getAsList(response, new TypeToken<Collection<Payable>>() {
+        return new JSONUtils().getAsList(response, new TypeToken<Collection<Payable>>() {
         }.getType());
     }
 

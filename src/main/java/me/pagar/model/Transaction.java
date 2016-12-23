@@ -1064,7 +1064,7 @@ public class Transaction extends PagarMeModel<Integer> {
     public Collection<Payable> findPayableCollection(final Integer totalPerPage, Integer page) throws PagarMeException {
         validateId();
         JsonArray responseArray = super.paginateThrough(totalPerPage, page, new PayableQueriableFields());
-        return JSONUtils.getAsList(responseArray, new TypeToken<Collection<Payable>>() {
+        return new JSONUtils().getAsList(responseArray, new TypeToken<Collection<Payable>>() {
         }.getType());
     }
     
@@ -1073,7 +1073,7 @@ public class Transaction extends PagarMeModel<Integer> {
         Payable payable = new Payable();
         payable.setId(payableId);
         JsonObject responseObject = super.getThrough(payable);
-        return JSONUtils.getAsObject(responseObject, Payable.class);
+        return new JSONUtils().getAsObject(responseObject, Payable.class);
     }
 
 
