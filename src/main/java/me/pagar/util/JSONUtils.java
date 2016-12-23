@@ -54,7 +54,6 @@ public class JSONUtils {
         GsonBuilder customBuilder =  getDefaultGsonBuilder();
         if(customDateTimeAdapter != null){
             customBuilder.registerTypeAdapter(DateTime.class, customDateTimeAdapter);
-            customDateTimeAdapter = null;
         }
         return customBuilder;
     }
