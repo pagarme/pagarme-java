@@ -10,7 +10,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import me.pagar.util.JSONUtils;
 import me.pagar.util.LocalDateAdapter;
-import me.pagar.util.DateTimeAdapter;
+import me.pagar.util.DateTimeIsoDateAdapter;
 import org.atteo.evo.inflector.English;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -133,12 +133,12 @@ public abstract class PagarMeModel<PK extends Serializable> {
         final PagarMeRequest request = null == id ?
                 new PagarMeRequest(HttpMethod.POST, String.format("/%s", className)) :
                 new PagarMeRequest(HttpMethod.PUT, String.format("/%s/%s/", className, id));
-        request.setParameters(JSONUtils.objectToMap(this));
+        request.setParameters(new JSONUtils().objectToMap(this));
 
         final JsonElement element = request.execute();
         flush();
 
-        return JSONUtils.getAsObject((JsonObject) element, clazz);
+        return new JSONUtils().getAsObject((JsonObject) element, clazz);
     }
 
     protected void addUnsavedProperty(final String name) {
@@ -176,7 +176,7 @@ public abstract class PagarMeModel<PK extends Serializable> {
 
     public String toJson() {
         return new GsonBuilder()
-                .registerTypeAdapter(DateTime.class, new DateTimeAdapter())
+                .registerTypeAdapter(DateTime.class, new DateTimeIsoDateAdapter())
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                 .create()
                 .toJson(this);

@@ -15,6 +15,7 @@ import me.pagar.model.PagarMeException;
 import me.pagar.model.Recipient;
 import me.pagar.model.Transaction;
 import me.pagarme.factory.TransactionFactory;
+import me.pagarme.helper.TestCases;
 
 public class AnticipationTest extends BaseTest {
 
@@ -27,7 +28,7 @@ public class AnticipationTest extends BaseTest {
         Collection<Recipient> recipients = new Recipient().findCollection(10, 0);
         defaultRecipient = recipients.iterator().next();
 
-        defaultRecipient = increaseAnticipationVolume(defaultRecipient);
+        defaultRecipient = TestCases.increaseAnticipationVolume(defaultRecipient);
     }
 
     @Test
@@ -66,8 +67,8 @@ public class AnticipationTest extends BaseTest {
 
     @Test
     public void testAnticipationList() throws PagarMeException{
-        BulkAnticipation anticipation1 = createAnticipationOnDefaultRecipient(12345678);
-        BulkAnticipation anticipation2 = createAnticipationOnDefaultRecipient(1234567);
+        BulkAnticipation anticipation1 = TestCases.createAnticipationOnRecipient(12345678, defaultRecipient);
+        BulkAnticipation anticipation2 = TestCases.createAnticipationOnRecipient(1234567, defaultRecipient);
 
         Collection<BulkAnticipation> anticipations = defaultRecipient.findAnticipations(10, 1);
         Assert.assertEquals(2, anticipations.size());
@@ -75,14 +76,14 @@ public class AnticipationTest extends BaseTest {
 
     @Test
     public void testAnticipationCancelation() throws PagarMeException{
-        BulkAnticipation anticipation = createAnticipationOnDefaultRecipient(12345678);
+        BulkAnticipation anticipation = TestCases.createAnticipationOnRecipient(12345678, defaultRecipient);
         anticipation = defaultRecipient.cancelAnticipation(anticipation);
         Assert.assertEquals(Status.CANCELED, anticipation.getStatus());
     }
 
     @Test
     public void testAnticipationDeletion() throws PagarMeException{
-        BulkAnticipation anticipation = createBuildingAnticipationOnDefaultRecipient(12345678);
+        BulkAnticipation anticipation = TestCases.createBuildingAnticipationOnRecipient(12345678, defaultRecipient);
 
         Collection<BulkAnticipation> anticipations = defaultRecipient.findAnticipations(10, 1);
         Assert.assertEquals(1, anticipations.size());
@@ -95,37 +96,10 @@ public class AnticipationTest extends BaseTest {
 
     @Test
     public void testAnticipationConfirmation() throws PagarMeException{
-        BulkAnticipation anticipation = createBuildingAnticipationOnDefaultRecipient(12345678);
+        BulkAnticipation anticipation = TestCases.createBuildingAnticipationOnRecipient(12345678, defaultRecipient);
         Assert.assertEquals(Status.BUILDING, anticipation.getStatus());
 
         anticipation = defaultRecipient.confirmBulkAnticipation(anticipation);
         Assert.assertEquals(Status.PENDING, anticipation.getStatus());
-    }
-
-    private Recipient increaseAnticipationVolume(Recipient recipient) throws PagarMeException{
-        recipient.setAnticipatableVolumePercentage(100);
-        return recipient.save();
-    }
-
-    private BulkAnticipation createAnticipationOnDefaultRecipient(Integer requestedAmount) throws PagarMeException{
-        Transaction transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
-        transaction.setAmount(requestedAmount);
-        transaction.save();
-
-        BulkAnticipation anticipation = new BulkAnticipation();
-        anticipation.setRequiredParametersForCreation(new DateTime().plusDays(3), Timeframe.END, requestedAmount, false);
-        anticipation = defaultRecipient.anticipate(anticipation);
-        return anticipation;
-    }
-
-    private BulkAnticipation createBuildingAnticipationOnDefaultRecipient(Integer requestedAmount) throws PagarMeException{
-        Transaction transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
-        transaction.setAmount(requestedAmount);
-        transaction.save();
-
-        BulkAnticipation anticipation = new BulkAnticipation();
-        anticipation.setRequiredParametersForCreation(new DateTime().plusDays(3), Timeframe.END, requestedAmount, true);
-        anticipation = defaultRecipient.anticipate(anticipation);
-        return anticipation;
     }
 }

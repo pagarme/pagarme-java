@@ -1,54 +1,69 @@
 package me.pagar.util;
 
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class JSONUtils {
-    private static final Gson GSON_DATA_PROVIDER;
 
-    static {
-        GSON_DATA_PROVIDER = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapter(DateTime.class, new DateTimeAdapter())
-                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
+    private DateTimeAdapter customDateTimeAdapter;
+
+    public final Gson getInterpreter() {
+        return getCustomGsonBuilder().create();
     }
 
-    public static final Gson getInterpreter() {
-        return GSON_DATA_PROVIDER;
+    public <T> T getAsObject(JsonObject json, Class<T> clazz) {
+        return getCustomGsonBuilder().create().fromJson(json, clazz);
     }
 
-    public static <T> T getAsObject(JsonObject json, Class<T> clazz) {
-        return GSON_DATA_PROVIDER.fromJson(json, clazz);
+    public <T> Collection<T> getAsList(JsonArray json, Type listType) {
+        return getCustomGsonBuilder().create().fromJson(json, listType);
     }
 
-    public static <T> Collection<T> getAsList(JsonArray json, Type listType) {
-        return GSON_DATA_PROVIDER.fromJson(json, listType);
+    public String getAsJson(Object object) {
+        return getCustomGsonBuilder().create().toJson(object);
     }
 
-    public static String getAsJson(Object object) {
-        return GSON_DATA_PROVIDER.toJson(object);
-    }
-
-    public static Map<String, Object> objectToMap(Object object) {
-        final String json = GSON_DATA_PROVIDER.toJson(object);
-        return GSON_DATA_PROVIDER.fromJson(json, new TypeToken<HashMap<String, Object>>() {
+    public Map<String, Object> objectToMap(Object object) {
+        final String json = getCustomGsonBuilder().create().toJson(object);
+        return getCustomGsonBuilder().create().fromJson(json, new TypeToken<HashMap<String, Object>>() {
         }.getType());
     }
 
-    public static JsonObject treeToJson(Object object) {
-        return GSON_DATA_PROVIDER.toJsonTree(object).getAsJsonObject();
+    public JsonObject treeToJson(Object object) {
+        return getCustomGsonBuilder().create().toJsonTree(object).getAsJsonObject();
+    }
+
+    public JSONUtils setDateTimeFormat(DateTimeAdapter dateTimeAdapter){
+        customDateTimeAdapter = dateTimeAdapter;
+        return this;
+    }
+
+    private GsonBuilder getCustomGsonBuilder(){
+        GsonBuilder customBuilder =  getDefaultGsonBuilder();
+        if(customDateTimeAdapter != null){
+            customBuilder.registerTypeAdapter(DateTime.class, customDateTimeAdapter);
+            customDateTimeAdapter = null;
+        }
+        return customBuilder;
+    }
+    
+    private GsonBuilder getDefaultGsonBuilder(){
+        return new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .registerTypeAdapter(DateTime.class, new DateTimeIsoDateAdapter())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
     }
 }

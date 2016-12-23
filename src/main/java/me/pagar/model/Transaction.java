@@ -454,7 +454,7 @@ public class Transaction extends PagarMeModel<Integer> {
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 
-        final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
+        final Transaction other = new JSONUtils().getAsObject((JsonObject) request.execute(), Transaction.class);
         copy(other);
         flush();
 
@@ -465,7 +465,7 @@ public class Transaction extends PagarMeModel<Integer> {
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 
-        final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
+        final Transaction other = new JSONUtils().getAsObject((JsonObject) request.execute(), Transaction.class);
         copy(other);
         flush();
 
@@ -473,7 +473,7 @@ public class Transaction extends PagarMeModel<Integer> {
     }
 
     public Collection<Transaction> findCollection(int totalPerPage, int page) throws PagarMeException {
-        return JSONUtils.getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Transaction>>() {
+        return new JSONUtils().getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Transaction>>() {
         }.getType());
     }
 
@@ -795,7 +795,7 @@ public class Transaction extends PagarMeModel<Integer> {
      * @throws PagarMeException
      */
     public Collection<Transaction> list(int totalPerPage, int page) throws PagarMeException {
-        return JSONUtils.getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Transaction>>() {
+        return new JSONUtils().getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Transaction>>() {
         }.getType());
     }
 
@@ -816,7 +816,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s", getClassName(), cardHashKeyEndpoint));
 
-        return JSONUtils.getAsObject((JsonObject) request.execute(), CardHashKey.class);
+        return new JSONUtils().getAsObject((JsonObject) request.execute(), CardHashKey.class);
     }
 
     /**
@@ -833,7 +833,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s/%s/%s", getClassName(),
                 getId(), antifraudAnalysis.getClassName(), antifraudAnalysisId));
 
-        return JSONUtils.getAsObject((JsonObject) request.execute(), AntifraudAnalysis.class);
+        return new JSONUtils().getAsObject((JsonObject) request.execute(), AntifraudAnalysis.class);
     }
 
     /**
@@ -850,7 +850,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s", getClassName(), getId(), antifraudAnalysis.getClassName()));
 
-        return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<AntifraudAnalysis>>() {
+        return new JSONUtils().getAsList((JsonArray) request.execute(), new TypeToken<Collection<AntifraudAnalysis>>() {
         }.getType());
     }
 
@@ -871,7 +871,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s/%s", getClassName(), getId(), splitRule.getClassName(), payableId));
 
-        return JSONUtils.getAsObject((JsonObject) request.execute(), Payable.class);
+        return new JSONUtils().getAsObject((JsonObject) request.execute(), Payable.class);
     }
 
     /**
@@ -889,7 +889,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s", getClassName(), getId(), payable.getClassName()));
 
-        return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<Payable>>() {
+        return new JSONUtils().getAsList((JsonArray) request.execute(), new TypeToken<Collection<Payable>>() {
         }.getType());
     }
 
@@ -909,7 +909,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s/%s", getClassName(), getId(), postback.getClassName(), postbackId));
 
-        return JSONUtils.getAsObject((JsonObject) request.execute(), Postback.class);
+        return new JSONUtils().getAsObject((JsonObject) request.execute(), Postback.class);
     }
 
     /**
@@ -931,7 +931,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST,
                 String.format("/%s/%s/%s/%s/redeliver", getClassName(), getId(), postback.getClassName(), postbackId));
 
-        return JSONUtils.getAsObject((JsonObject) request.execute(), Postback.class);
+        return new JSONUtils().getAsObject((JsonObject) request.execute(), Postback.class);
     }
 
     /**
@@ -948,7 +948,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s", getClassName(), getId(), postback.getClassName()));
 
-        return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<Postback>>() {
+        return new JSONUtils().getAsList((JsonArray) request.execute(), new TypeToken<Collection<Postback>>() {
         }.getType());
     }
 
@@ -968,7 +968,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s/%s", getClassName(), getId(), splitRule.getClassName(), splitRuleId));
 
-        return JSONUtils.getAsObject((JsonObject) request.execute(), SplitRule.class);
+        return new JSONUtils().getAsObject((JsonObject) request.execute(), SplitRule.class);
     }
 
     /**
@@ -985,7 +985,7 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s", getClassName(), getId(), splitRule.getClassName()));
 
-        return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<SplitRule>>() {
+        return new JSONUtils().getAsList((JsonArray) request.execute(), new TypeToken<Collection<SplitRule>>() {
         }.getType());
     }
 
@@ -1010,7 +1010,7 @@ public class Transaction extends PagarMeModel<Integer> {
                 String.format("/%s/%s/refund", getClassName(), getId()));
         request.getParameters().put("amount", amount);
 
-        final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
+        final Transaction other = new JSONUtils().getAsObject((JsonObject) request.execute(), Transaction.class);
         copy(other);
         flush();
 
@@ -1023,12 +1023,12 @@ public class Transaction extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST,
                 String.format("/%s/%s/refund", getClassName(), getId()));
                 
-        Map<String, Object> bankAccountMap = JSONUtils.objectToMap(bankAccount);
+        Map<String, Object> bankAccountMap = new JSONUtils().objectToMap(bankAccount);
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("bank_account", bankAccountMap);
         request.setParameters(parameters);
 
-        final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
+        final Transaction other = new JSONUtils().getAsObject((JsonObject) request.execute(), Transaction.class);
         copy(other);
         flush();
 
@@ -1053,7 +1053,7 @@ public class Transaction extends PagarMeModel<Integer> {
         request.getParameters().put("amount", amount);
         request.getParameters().put("metadata", this.getMetadata());
 
-        final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
+        final Transaction other = new JSONUtils().getAsObject((JsonObject) request.execute(), Transaction.class);
         copy(other);
         flush();
 
@@ -1066,7 +1066,7 @@ public class Transaction extends PagarMeModel<Integer> {
      * @return Instância atualizada do Objeto.
      */
     public Transaction refresh() throws PagarMeException {
-        final Transaction other = JSONUtils.getAsObject(refreshModel(), Transaction.class);
+        final Transaction other = new JSONUtils().getAsObject(refreshModel(), Transaction.class);
         copy(other);
         flush();
         return other;

@@ -21,7 +21,7 @@ public class CompaniesTempory extends PagarMeModel<Integer>{
     public String getTemporaryCompanyApiKey() {
         try {
             final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST,"/companies/temporary");
-            CompaniesTempory company = JSONUtils.getAsObject((JsonObject) request.execute(), CompaniesTempory.class);
+            CompaniesTempory company = new JSONUtils().getAsObject((JsonObject) request.execute(), CompaniesTempory.class);
 
             return company.apiKey.get("test").toString();
 

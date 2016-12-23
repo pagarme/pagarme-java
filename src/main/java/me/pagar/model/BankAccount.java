@@ -125,7 +125,7 @@ public class BankAccount extends PagarMeModel<Integer> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s", getClassName(), id));
 
-        final BankAccount other = JSONUtils.getAsObject((JsonObject) request.execute(), BankAccount.class);
+        final BankAccount other = new JSONUtils().getAsObject((JsonObject) request.execute(), BankAccount.class);
         copy(other);
         flush();
 
@@ -133,7 +133,7 @@ public class BankAccount extends PagarMeModel<Integer> {
     }
 
     public Collection<BankAccount> findCollection(int totalPerPage, int page) throws PagarMeException {
-        return JSONUtils.getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<BankAccount>>() {
+        return new JSONUtils().getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<BankAccount>>() {
         }.getType());
     }
 
@@ -150,7 +150,7 @@ public class BankAccount extends PagarMeModel<Integer> {
     }
 
     public BankAccount refresh() throws PagarMeException {
-        final BankAccount other = JSONUtils.getAsObject(refreshModel(), BankAccount.class);
+        final BankAccount other = new JSONUtils().getAsObject(refreshModel(), BankAccount.class);
         copy(other);
         flush();
         return other;

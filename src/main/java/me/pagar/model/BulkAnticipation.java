@@ -18,9 +18,9 @@ public class BulkAnticipation extends PagarMeModel<String> {
     private Integer fee;
     @Expose(serialize = false)
     private Integer anticipationFee;
-
-    @Expose
+    @Expose(serialize = false)
     private Boolean building;
+
     @Expose
     private DateTime paymentDate;
     @Expose
@@ -79,23 +79,6 @@ public class BulkAnticipation extends PagarMeModel<String> {
         if(build){
             this.build = build;
         }
-    }
-
-    public Map<String, Object> toMap(){
-        HashMap<String, Object> mappedThis = new HashMap<String, Object>();
-        if(this.paymentDate != null){
-            mappedThis.put("payment_date", this.paymentDate.getMillis());
-        }
-        if(this.timeframe != null){
-            mappedThis.put("timeframe", this.timeframe.name().toLowerCase());
-        }
-        if(this.build != null){
-            mappedThis.put("build", this.build.toString());
-        }
-        if(this.requestedAmount != null){
-            mappedThis.put("requested_amount", requestedAmount);
-        }
-        return mappedThis;
     }
 
     public enum Status{

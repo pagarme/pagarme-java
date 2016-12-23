@@ -142,7 +142,7 @@ public class Card extends PagarMeModel<String> {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s", getClassName(), id));
 
-        final Card other = JSONUtils.getAsObject((JsonObject) request.execute(), Card.class);
+        final Card other = new JSONUtils().getAsObject((JsonObject) request.execute(), Card.class);
         copy(other);
         flush();
 
@@ -150,7 +150,7 @@ public class Card extends PagarMeModel<String> {
     }
 
     public Card refresh() throws PagarMeException {
-        final Card other = JSONUtils.getAsObject(refreshModel(), Card.class);
+        final Card other = new JSONUtils().getAsObject(refreshModel(), Card.class);
         copy(other);
         flush();
         return other;

@@ -170,7 +170,7 @@ public class Customer extends PagarMeModel<Integer>{
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s", getClassName(), id));
 
-        final Customer other = JSONUtils.getAsObject((JsonObject) request.execute(), Customer.class);
+        final Customer other = new JSONUtils().getAsObject((JsonObject) request.execute(), Customer.class);
         copy(other);
         flush();
 
@@ -178,7 +178,7 @@ public class Customer extends PagarMeModel<Integer>{
     }
 
     public Collection<Customer> findCollection(int totalPerPage, int page) throws PagarMeException {
-        return JSONUtils.getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Customer>>() {
+        return new JSONUtils().getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Customer>>() {
         }.getType());
     }
 
