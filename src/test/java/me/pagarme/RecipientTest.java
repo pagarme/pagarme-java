@@ -68,7 +68,7 @@ public class RecipientTest extends BaseTest{
         Recipient newRecipient = recipientFactory.create();
         newRecipient.setBankAccountId(bankAccountId);
         newRecipient.save();
-        Collection<Recipient> recipientCollection =  newRecipient.findCollection(1,0);
+        Collection<Recipient> recipientCollection =  new Recipient().findCollection(1,0);
 
         Assert.assertEquals(1, recipientCollection.size());
         for (Recipient recipient : recipientCollection) {

@@ -16,6 +16,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
+import me.pagar.model.filter.PayableQueriableFields;
 import me.pagar.util.JSONUtils;
 
 public class Transaction extends PagarMeModel<Integer> {
@@ -1059,6 +1060,22 @@ public class Transaction extends PagarMeModel<Integer> {
 
         return other;
     }
+    
+    public Collection<Payable> findPayableCollection(final Integer totalPerPage, Integer page) throws PagarMeException {
+        validateId();
+        JsonArray responseArray = super.paginateThrough(totalPerPage, page, new PayableQueriableFields());
+        return JSONUtils.getAsList(responseArray, new TypeToken<Collection<Payable>>() {
+        }.getType());
+    }
+    
+    public Payable findPayable(Integer payableId) throws PagarMeException {
+        validateId();
+        Payable payable = new Payable();
+        payable.setId(payableId);
+        JsonObject responseObject = super.getThrough(payable);
+        return JSONUtils.getAsObject(responseObject, Payable.class);
+    }
+
 
     /**
      * Atualiza a instância do objeto com os dados mais recentes do backend.

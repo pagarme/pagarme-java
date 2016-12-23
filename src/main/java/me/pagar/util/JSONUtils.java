@@ -8,6 +8,8 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -63,6 +65,14 @@ public class JSONUtils {
             .excludeFieldsWithoutExposeAnnotation()
             .registerTypeAdapter(DateTime.class, new DateTimeIsoDateAdapter())
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .setExclusionStrategies(new ExclusionStrategy(){
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+                public boolean shouldSkipField(FieldAttributes fieldAttrs) {
+                    return fieldAttrs.equals(null);
+                }
+            });
     }
 }

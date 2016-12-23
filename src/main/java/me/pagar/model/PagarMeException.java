@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import me.pagar.util.JSONUtils;
-import me.pagar.util.JSONUtils;
 
 public class PagarMeException extends Exception {
     private int returnCode;
@@ -16,17 +15,12 @@ public class PagarMeException extends Exception {
 
     private String method;
 
-    private String parameterMap;
-
-    private String type;
-
     Collection<PagarMeError> errors = new ArrayList<PagarMeError>();
 
     public static PagarMeException buildWithError(final Exception error) {
         return new PagarMeException(error.getMessage(), null);
     }
 
-    @SuppressWarnings("unchecked")
     public static PagarMeException buildWithError(final PagarMeResponse response) {
 
         if (null == response) {
@@ -64,7 +58,6 @@ public class PagarMeException extends Exception {
         this(message, null);
     }
 
-    @SuppressWarnings("unchecked")
     public PagarMeException(final String message, final JsonObject responseError) {
         super(message);
 
