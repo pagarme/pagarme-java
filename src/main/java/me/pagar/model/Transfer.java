@@ -111,7 +111,7 @@ public class Transfer extends PagarMeModel<String> {
         request.getParameters().put("recipient_id", getRecipientId());
         request.getParameters().put("bank_account_id", getBankAccountId());
 
-        final Transfer other = JSONUtils.getAsObject((JsonObject) request.execute(), Transfer.class);
+        final Transfer other = new JSONUtils().getAsObject((JsonObject) request.execute(), Transfer.class);
         copy(other);
         flush();
 
@@ -121,7 +121,7 @@ public class Transfer extends PagarMeModel<String> {
     public Transfer find(String id) throws PagarMeException{
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 
-        final Transfer other = JSONUtils.getAsObject((JsonObject) request.execute(), Transfer.class);
+        final Transfer other = new JSONUtils().getAsObject((JsonObject) request.execute(), Transfer.class);
         copy(other);
         flush();
 
@@ -129,7 +129,7 @@ public class Transfer extends PagarMeModel<String> {
     }
 
     public Collection<Transfer> findCollection(int totalPerPage, int page) throws PagarMeException {
-        return JSONUtils.getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Transfer>>() {
+        return new JSONUtils().getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Transfer>>() {
         }.getType());
     }
 

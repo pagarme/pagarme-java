@@ -19,6 +19,6 @@ public class TestEndpoints {
         parameters.put("status", "paid");
         parameters.put("api_key", PagarMe.getApiKey());
         request.setParameters(parameters);
-        return JSONUtils.getAsObject((JsonObject)request.execute(), Transaction.class);
+        return new JSONUtils().getAsObject((JsonObject)request.execute(), Transaction.class);
     }
 }

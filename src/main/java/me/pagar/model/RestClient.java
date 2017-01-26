@@ -154,7 +154,7 @@ public class RestClient {
                 httpClient.setDoOutput(true);
 
                 if (parameters.size() > 0) {
-                    final byte[] payload = JSONUtils.getInterpreter().toJson(parameters).getBytes();
+                    final byte[] payload = new JSONUtils().getInterpreter().toJson(parameters).getBytes();
                     httpClient.addRequestProperty("Content-Type", "application/json");
                     httpClient.addRequestProperty("Content-Length", String.valueOf(payload.length));
 
@@ -185,7 +185,7 @@ public class RestClient {
             httpClient.disconnect();
 
             return new PagarMeResponse(responseCode,
-                    JSONUtils.getInterpreter().fromJson(builder.toString(), JsonElement.class));
+                    new JSONUtils().getInterpreter().fromJson(builder.toString(), JsonElement.class));
         } catch (Exception e) {
 
             if (e instanceof JsonSyntaxException) {

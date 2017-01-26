@@ -33,7 +33,7 @@ public class Balance {
 
     public Balance refresh() throws PagarMeException {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s", getClass().getName()));
-        final Balance other = JSONUtils.getAsObject((JsonObject) request.execute(), Balance.class);
+        final Balance other = new JSONUtils().getAsObject((JsonObject) request.execute(), Balance.class);
         copy(other);
         return other;
     }

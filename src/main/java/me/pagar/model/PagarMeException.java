@@ -27,7 +27,7 @@ public class PagarMeException extends Exception {
             return null;
         }
 
-        final JsonObject responseError = JSONUtils.getInterpreter().fromJson(response.getBody(), JsonObject.class);
+        final JsonObject responseError = new JSONUtils().getInterpreter().fromJson(response.getBody(), JsonObject.class);
 
         final JsonArray errors = responseError.getAsJsonArray("errors");
 

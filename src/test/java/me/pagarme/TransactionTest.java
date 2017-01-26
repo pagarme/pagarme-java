@@ -168,8 +168,8 @@ public class TransactionTest extends BaseTest {
         transaction.setAntifraudMetadata(antifraudMetadata);
         transaction.save();
 
-        JsonObject json = JSONUtils.treeToJson(transaction.getAntifraudMetadata());
-        Map<String, Object> antifraudMetadataRes = JSONUtils.getAsObject(json, HashMap.class);
+        JsonObject json = new JSONUtils().treeToJson(transaction.getAntifraudMetadata());
+        Map<String, Object> antifraudMetadataRes = new JSONUtils().getAsObject(json, HashMap.class);
 
         Assert.assertEquals(antifraudMetadataRes.get("antifraudMetadata1"), "value1");
         Assert.assertEquals(antifraudMetadataRes.get("antifraudMetadata2"), "value2");
@@ -187,8 +187,8 @@ public class TransactionTest extends BaseTest {
         transaction.setAntifraudMetadata(antifraudMetadata);
         transaction.save();
 
-        JsonObject json = JSONUtils.treeToJson(transaction.getAntifraudMetadata());
-        AntifraudMetadataPojo antifraudMetadataRes = JSONUtils.getAsObject(json, AntifraudMetadataPojo.class);
+        JsonObject json = new JSONUtils().treeToJson(transaction.getAntifraudMetadata());
+        AntifraudMetadataPojo antifraudMetadataRes = new JSONUtils().getAsObject(json, AntifraudMetadataPojo.class);
 
         Assert.assertEquals(antifraudMetadataRes.getName(), "Philip J. Fry");
     }
