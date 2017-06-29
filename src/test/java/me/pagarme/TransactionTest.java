@@ -281,6 +281,44 @@ public class TransactionTest extends BaseTest {
         Assert.assertEquals(transaction.getPaidAmount(), PAID_AMOUNT_PARTIAL);
         Assert.assertEquals(transaction.getAuthorizedAmount(), AMOUNT);
     }
+    
+    @Test
+    public void testTransactionAndCaptureWithSPlit() throws Throwable{
+        
+        transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
+        transaction.setCapture(false);
+        transaction.save();
+
+        Assert.assertEquals(transaction.getStatus(), Transaction.Status.AUTHORIZED);
+
+        Collection<SplitRule> splitRules = new ArrayList<SplitRule>();
+        
+        Recipient recipient1 = recipientFactory.create();
+        recipient1.save();
+        SplitRule splitRule = new SplitRule();
+        splitRule.setRecipientId(recipient1.getId());
+        splitRule.setPercentage(50);
+        splitRule.setLiable(true);
+        splitRule.setChargeProcessingFee(true);
+        splitRules.add(splitRule);
+
+        Recipient recipient2  = recipientFactory.create();
+        SplitRule splitRule2 = new SplitRule();
+        recipient2.save();
+        splitRule2.setRecipientId(recipient2.getId());
+        splitRule2.setPercentage(50);
+        splitRule2.setLiable(true);
+        splitRule2.setChargeProcessingFee(true);
+
+        splitRules.add(splitRule2);
+        
+        transaction.capture(splitRules);
+        
+
+        Assert.assertEquals(transaction.getStatus(), Transaction.Status.PAID);
+        Assert.assertEquals(transaction.getPaidAmount(), AMOUNT);
+        Assert.assertEquals(transaction.getAuthorizedAmount(), AMOUNT);
+    }
 
     @Test
     public void testTransactionAuthAndCaptureRefoundPartialValue() throws Throwable {

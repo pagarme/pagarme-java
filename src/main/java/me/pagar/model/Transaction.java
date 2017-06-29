@@ -1027,6 +1027,8 @@ public class Transaction extends PagarMeModel<Integer> {
         parameters.put("bank_account", bankAccountMap);
         request.setParameters(parameters);
 
+        
+        
         final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
         copy(other);
         flush();
@@ -1058,6 +1060,24 @@ public class Transaction extends PagarMeModel<Integer> {
 
         return other;
     }
+    
+    public Transaction capture(Collection<SplitRule> splitRules) throws PagarMeException{
+        validateId();
+        
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST,
+                String.format("/%s/%s/capture", getClassName(), getId()));
+       
+        request.getParameters().put("metadata", this.getMetadata());
+        request.getParameters().put("split_rules", splitRules);
+
+        final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
+        copy(other);
+        flush();
+
+        return other;        
+        
+    }
+    
     
     public Collection<Payable> findPayableCollection(final Integer totalPerPage, Integer page) throws PagarMeException {
         validateId();
