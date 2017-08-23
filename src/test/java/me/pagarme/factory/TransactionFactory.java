@@ -1,6 +1,6 @@
 package me.pagarme.factory;
 
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 
 import me.pagar.model.Card;
 
@@ -82,7 +82,7 @@ public class TransactionFactory {
 
         Transaction transaction = new Transaction();
 
-        transaction.setBoletoExpirationDate(LocalDate.now().plusDays(4));
+        transaction.setBoletoExpirationDate(DateTime.now().plusDays(4));
         transaction.setAmount(100);
         transaction.setPaymentMethod(Transaction.PaymentMethod.BOLETO);
         return transaction;
