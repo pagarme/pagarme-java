@@ -86,8 +86,8 @@ public class TransactionTest extends BaseTest {
     public void testCreateAndCaptureTransactionWithCardEmv() throws Throwable {
 
         transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
-        String cardEmvTest = "Card Emv Testee";
-        String cardTrack2Test = "Card Track 2 Testee";
+        String cardEmvTest = "9F26009F02009F10009F37009F360095009A009C005F2A009F1A0082009F03009F33009F3400";
+        String cardTrack2Test = "Card Track 2 Teste";
         transaction.setCardEmvData(cardEmvTest);
         transaction.setCardTrack2(cardTrack2Test);
         transaction.setCaptureMethod(CaptureMethod.EMV);
