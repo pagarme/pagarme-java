@@ -92,6 +92,7 @@ public class TransactionFactory {
         transaction.setBoletoExpirationDate(DateTime.now().plusDays(4));
         transaction.setAmount(AMOUNT);
         transaction.setPaymentMethod(Transaction.PaymentMethod.BOLETO);
+
         return transaction;
     }
 }
