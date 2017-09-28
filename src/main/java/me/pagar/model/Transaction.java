@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.ws.rs.HttpMethod;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.google.common.base.CaseFormat;
 import com.google.gson.JsonArray;
@@ -351,7 +350,7 @@ public class Transaction extends PagarMeModel<Integer> {
      */
     @Expose(deserialize = false)
     @SerializedName("boleto_expiration_date")
-    private LocalDate boletoExpirationDate;
+    private DateTime boletoExpirationDate;
 
     /**
      * Data de atualização da transação no formato ISODate
@@ -744,7 +743,7 @@ public class Transaction extends PagarMeModel<Integer> {
         addUnsavedProperty("customer");
     }
 
-    public void setBoletoExpirationDate(final LocalDate boletoExpirationDate) {
+    public void setBoletoExpirationDate(final DateTime boletoExpirationDate) {
         this.boletoExpirationDate = boletoExpirationDate;
         addUnsavedProperty("boletoExpirationDate");
     }
