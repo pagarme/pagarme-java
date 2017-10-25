@@ -354,11 +354,12 @@ public class TransactionTest extends BaseTest {
         Assert.assertNotNull(transaction.getBoletoBarcode());
     }
 
+    @Test
     public void testBoletoExpirationDate() throws Throwable{
         transaction = transactionFactory.createBoletoTransaction();
         transaction.save();
 
-        Assert.assertEquals(transaction.getBoletoExpirationDate(), DateTime.now().plusDays(4));
+        Assert.assertNotNull(transaction.getBoletoExpirationDate());
     }
 
     @Test
