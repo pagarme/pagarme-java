@@ -748,6 +748,10 @@ public class Transaction extends PagarMeModel<Integer> {
         addUnsavedProperty("boletoExpirationDate");
     }
 
+    public DateTime getBoletoExpirationDate(){
+        return boletoExpirationDate;
+    }
+
     public void setMetadata(final Map<String, Object> metadata) {
         this.metadata = metadata;
         addUnsavedProperty("metadata");

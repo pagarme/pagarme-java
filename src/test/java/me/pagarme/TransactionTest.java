@@ -24,6 +24,7 @@ import me.pagar.util.JSONUtils;
 import me.pagarme.factory.RecipientFactory;
 import me.pagarme.factory.TransactionFactory;
 import me.pagarme.helper.TestEndpoints;
+import org.joda.time.DateTime;
 
 public class TransactionTest extends BaseTest {
 
@@ -351,6 +352,13 @@ public class TransactionTest extends BaseTest {
         Assert.assertEquals(transaction.getPaymentMethod(), Transaction.PaymentMethod.BOLETO);
         Assert.assertEquals(transaction.getBoletoUrl(), "https://pagar.me");
         Assert.assertNotNull(transaction.getBoletoBarcode());
+    }
+
+    public void testBoletoExpirationDate() throws Throwable{
+        transaction = transactionFactory.createBoletoTransaction();
+        transaction.save();
+
+        Assert.assertEquals(transaction.getBoletoExpirationDate(), DateTime.now().plusDays(4));
     }
 
     @Test
