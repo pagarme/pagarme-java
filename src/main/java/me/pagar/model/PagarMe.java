@@ -66,7 +66,7 @@ public abstract class PagarMe {
             mac.init(signingKey);
 
             // compute the hmac on input data bytes
-            final byte[] rawHmac = mac.doFinal(URLDecoder.decode(payload, ASCII).getBytes(ASCII));
+            final byte[] rawHmac = mac.doFinal(payload.getBytes(ASCII));
 
             final Formatter formatter = new Formatter();
 
