@@ -93,10 +93,12 @@ public class SubscriptionTest extends BaseTest {
         Assert.assertEquals(subscription.getCurrentPeriodStart(), foundSubscription.getCurrentPeriodStart());
         Assert.assertEquals(subscription.getCurrentTransaction(), foundSubscription.getCurrentTransaction());
         Assert.assertEquals(subscription.getCustomer().getId(), foundSubscription.getCustomer().getId());
-        Assert.assertEquals(subscription.getMetadata(), foundSubscription.getMetadata());
         Assert.assertEquals(PaymentMethod.CREDIT_CARD, foundSubscription.getPaymentMethod());
         Assert.assertEquals(subscription.getPlan().getId(), foundSubscription.getPlan().getId());
         Assert.assertEquals(subscription.getStatus(), foundSubscription.getStatus());
+
+        Assert.assertEquals("some_metadata",foundSubscription.getMetadata().keySet().iterator().next());
+        Assert.assertEquals("123456",foundSubscription.getMetadata().values().iterator().next());
     }
 
     /*
