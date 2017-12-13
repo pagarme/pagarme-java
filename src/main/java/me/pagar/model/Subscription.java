@@ -119,6 +119,7 @@ public class Subscription extends PagarMeModel<String> {
         this.currentPeriodEnd = other.getCurrentPeriodEnd();
         this.charges = other.getCharges();
         this.status = other.getStatus();
+        this.metadata = other.getMetadata();
     }
 
     public void setCreditCardSubscriptionWithCardHash(String planId, String cardHash, Customer customer){
@@ -174,6 +175,10 @@ public class Subscription extends PagarMeModel<String> {
 
     public void setSplitRules(final Collection<SplitRule> splitRules) {
         this.splitRules = splitRules;
+    }
+
+     public void setMetadata(final Map<String, Object> metadata) {
+        this.metadata = metadata;
     }
 
     public String getCardHash() {
