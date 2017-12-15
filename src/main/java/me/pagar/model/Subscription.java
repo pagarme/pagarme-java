@@ -112,6 +112,29 @@ public class Subscription extends PagarMeModel<String> {
         return other;
     }
 
+    public Collection<Postback> postbacks() throws PagarMeException {
+        validateId();
+
+        final Postback postback = new Postback();
+
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
+                String.format("/%s/%s/%s", getClassName(), getId(), postback.getClassName()));
+
+        return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<Postback>>() {
+        }.getType());
+    }
+
+     public Postback postbacks(final String postbackId) throws PagarMeException {
+        validateId();
+
+        final Postback postback = new Postback();
+
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
+                String.format("/%s/%s/%s/%s", getClassName(), getId(), postback.getClassName(), postbackId));
+
+        return JSONUtils.getAsObject((JsonObject) request.execute(), Postback.class);
+    }
+
     private void copy(Subscription other) {
         super.copy(other);
         this.plan = other.getPlan();
