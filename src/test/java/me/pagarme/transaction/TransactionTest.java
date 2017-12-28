@@ -305,7 +305,9 @@ public class TransactionTest extends BaseTest {
         transaction.setBoletoExpirationDate(DateTime.now().plusDays(4));
         transaction.save();
 
-        Assert.assertEquals(transaction.getBoletoExpirationDate().toLocalDate(), DateTime.now().plusDays(4).toLocalDate() );
+        Transaction foundTransaction = new Transaction().find(transaction.getId());
+
+        Assert.assertEquals(DateTime.now().plusDays(4).withTime(2, 0, 0, 0), foundTransaction.getBoletoExpirationDate());
     }
 
     @Test
