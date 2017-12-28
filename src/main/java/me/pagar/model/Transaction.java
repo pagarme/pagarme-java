@@ -348,8 +348,7 @@ public class Transaction extends PagarMeModel<Integer> {
     /**
      * Data de expiração do boleto (em ISODate)
      */
-    @Expose(deserialize = false)
-    @SerializedName("boleto_expiration_date")
+    @Expose
     private DateTime boletoExpirationDate;
 
     /**
@@ -1146,6 +1145,7 @@ public class Transaction extends PagarMeModel<Integer> {
         this.paymentMethod = other.paymentMethod;
         this.boletoUrl = other.boletoUrl;
         this.boletoBarcode = other.boletoBarcode;
+        this.boletoExpirationDate = other.boletoExpirationDate;
         this.referer = other.referer;
         this.ip = other.ip;
         this.cardId = other.cardId;
