@@ -53,6 +53,8 @@ public class Subscription extends PagarMeModel<String> {
     private Phone phone;
     @Expose(serialize = false)
     private Address address;
+    @Expose
+    private Card card;
 
     public Subscription save() throws PagarMeException {
         final Subscription saved = super.save(getClass());
@@ -239,6 +241,10 @@ public class Subscription extends PagarMeModel<String> {
 
     public Customer getCustomer() {
         return customer;
+    }
+
+    public Card getCard() {
+        return card;
     }
 
     public Map<String, Object> getMetadata() {
