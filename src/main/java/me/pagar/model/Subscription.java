@@ -122,6 +122,12 @@ public class Subscription extends PagarMeModel<String> {
         this.charges = other.getCharges();
         this.status = other.getStatus();
         this.metadata = other.getMetadata();
+        this.customer = other.getCustomer();
+        this.paymentMethod = other.getPaymentMethod();
+        this.splitRules = other.getSplitRules();
+        this.phone = other.getPhone();
+        this.address = other.getAddress();
+        this.card = other.getCard();
     }
 
     public void setCreditCardSubscriptionWithCardHash(String planId, String cardHash, Customer customer){
