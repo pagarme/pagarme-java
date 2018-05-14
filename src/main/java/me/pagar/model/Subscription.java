@@ -96,16 +96,23 @@ public class Subscription extends PagarMeModel<String> {
         return other;
     }
 
-    public Collection<Transaction> transactions() throws PagarMeException {
+    public Collection<Transaction> transactions(Integer count, Integer page) throws PagarMeException {
         validateId();
 
         final Transaction transaction = new Transaction();
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
                 String.format("/%s/%s/%s", getClassName(), getId(), transaction.getClassName()));
-
+        HashMap<String,Object> params = new HashMap<String,Object>();
+        params.put("count", count);
+        params.put("page",page);
+        request.setParameters(params);
         return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<Transaction>>() {
         }.getType());
+    }
+    
+    public Collection<Transaction> transactions() throws PagarMeException{
+        return transactions(10,1); 
     }
 
     public Subscription refresh() throws PagarMeException {
