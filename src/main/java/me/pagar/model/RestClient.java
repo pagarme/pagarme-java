@@ -3,22 +3,17 @@ package me.pagar.model;
 import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
+
 import me.pagar.util.JSONUtils;
+import me.pagar.security.TLSSocketFactory;
+import me.pagar.security.TLSSocketConnectionFactory;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriBuilder;
 import java.io.*;
-import java.net.URL;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,29 +37,17 @@ public class RestClient {
 
     private InputStream is;
 
-    private void setupSecureConnection(final HttpsURLConnection httpClient) throws KeyStoreException,
-            IOException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
-        final URL certFile = Thread.currentThread().getContextClassLoader()
-                .getResource("pagarme.crt");
+    private void setupSecureConnection(final HttpsURLConnection httpClient) throws IOException,
+            NoSuchAlgorithmException, KeyManagementException {
 
-        if (null == certFile) {
-            return;
+        String version = System.getProperty("java.version");
+        int sysMajorVersion = Integer.parseInt(String.valueOf(version.charAt(2)));
+
+        if (sysMajorVersion == 6) {
+            httpClient.setSSLSocketFactory(new TLSSocketConnectionFactory());
+        } else {
+            httpClient.setSSLSocketFactory(new TLSSocketFactory());
         }
-
-        final Certificate cert = CertificateFactory.getInstance("X.509")
-                .generateCertificate(certFile.openStream());
-
-        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("pagarme", cert);
-
-        final TrustManagerFactory tmf = TrustManagerFactory.getInstance("X.509");
-        tmf.init(keyStore);
-
-        final SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, tmf.getTrustManagers(), null);
-
-        httpClient.setSSLSocketFactory(ctx.getSocketFactory());
     }
 
     public RestClient(final String method, final String url) throws PagarMeException {
@@ -77,7 +60,9 @@ public class RestClient {
 
     @SuppressWarnings("unchecked")
     public RestClient(final String method, final String url, Map<String, Object> parameters,
-                      Map<String, String> headers) throws PagarMeException {
+            Map<String, String> headers) throws PagarMeException {
+        System.setProperty("https.protocols", "TLSv1.2");
+
         this.method = method;
         this.url = url;
         this.parameters = parameters;
@@ -90,7 +75,6 @@ public class RestClient {
             this.parameters = new HashMap<String, Object>();
         }
 
-
         headers.put("User-Agent", "pagarme-java 1.0.0");
         headers.put("Accept", "application/json");
 
@@ -102,6 +86,7 @@ public class RestClient {
 
             try {
                 final UriBuilder builder = UriBuilder.fromPath(this.url);
+
                 builder.queryParam(API_KEY, PagarMe.getApiKey());
 
                 if (this.parameters.containsKey(AMOUNT) && this.parameters.size() == 1) {
@@ -148,9 +133,9 @@ public class RestClient {
 
         try {
 
-            if (method.equalsIgnoreCase(HttpMethod.POST) ||
-                    method.equalsIgnoreCase(HttpMethod.PUT) ||
-                    method.equalsIgnoreCase(HttpMethod.DELETE)) {
+            if (method.equalsIgnoreCase(HttpMethod.POST)
+                    || method.equalsIgnoreCase(HttpMethod.PUT)
+                    || method.equalsIgnoreCase(HttpMethod.DELETE)) {
                 httpClient.setDoOutput(true);
 
                 if (parameters.size() > 0) {
