@@ -5,16 +5,31 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Scanner;
+
+import javax.net.ssl.HttpsURLConnection;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.joda.time.DateTime;
+
+import me.pagar.security.TLSSocketConnectionFactory;
 
 public class PagarmeCalendar {
     private static final String HOLIDAY_CALENDAR_PATH = "https://raw.githubusercontent.com/pagarme/business-calendar/master/data/brazil/";
 
     private static JSONArray getPagarmeOfficialHolidayCalendar(Integer year) throws Exception {
         URL holidayCalendarURL = new URL(HOLIDAY_CALENDAR_PATH + year + ".json");
-        Scanner scanner = new Scanner(holidayCalendarURL.openStream());
+        HttpsURLConnection connection = (HttpsURLConnection) holidayCalendarURL.openConnection();
+        
+        String version = System.getProperty("java.version");
+        int sysMajorVersion = Integer.parseInt(String.valueOf(version.charAt(2)));
+
+        if (sysMajorVersion == 6) {
+            connection.setSSLSocketFactory(new TLSSocketConnectionFactory());
+        }
+
+        connection.connect();
+        Scanner scanner = new Scanner(connection.getInputStream());
         String responseJSON = scanner.useDelimiter("\\Z").next();
         scanner.close();
         JSONObject calendarJSON = new JSONObject(responseJSON);
