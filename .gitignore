@@ -2,6 +2,14 @@
 # Ignore only folders named target in root dir and direct child dirs.
 /target/
 */target/
+.gradle/
+gradle/
+build/
+bin/
+out/
+gradlew
+gradlew.bat
+
 
 # Eclipse generated files.
 .settings
