@@ -41,7 +41,12 @@ public class RestClient {
             NoSuchAlgorithmException, KeyManagementException {
 
         String version = System.getProperty("java.version");
-        int sysMajorVersion = Integer.parseInt(String.valueOf(version.charAt(2)));
+
+        // remove everything after the .
+        // we only need the major version
+        version = version.substring(0, version.indexOf('.'));
+
+        int sysMajorVersion = Integer.parseInt(version);
 
         if (sysMajorVersion == 6) {
             httpClient.setSSLSocketFactory(new TLSSocketConnectionFactory());
