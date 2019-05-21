@@ -37,11 +37,28 @@ public class RestClient {
 
     private InputStream is;
 
-    private void setupSecureConnection(final HttpsURLConnection httpClient) throws IOException,
-            NoSuchAlgorithmException, KeyManagementException {
-
+    private static int getJavaVersion() {
         String version = System.getProperty("java.version");
-        int sysMajorVersion = Integer.parseInt(String.valueOf(version.charAt(2)));
+        if(version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            int dot = version.indexOf(".");
+            if(dot != -1) {
+                version = version.substring(0, dot);
+            }
+        }
+
+        return Integer.parseInt(version);
+    }
+
+    private void setupSecureConnection(final HttpsURLConnection httpClient) throws IOException,
+            NoSuchAlgorithmException, KeyManagementException, PagarMeException {
+
+        int sysMajorVersion = RestClient.getJavaVersion();
+
+        if (sysMajorVersion < 6 || sysMajorVersion > 8) {
+            throw new PagarMeException("Your installed Java version should be >= 6 and <= 8");
+        }
 
         if (sysMajorVersion == 6) {
             httpClient.setSSLSocketFactory(new TLSSocketConnectionFactory());
