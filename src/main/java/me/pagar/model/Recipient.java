@@ -13,12 +13,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import me.pagar.model.BalanceOperation;
 
 import me.pagar.model.BulkAnticipation.Timeframe;
 import me.pagar.util.DateTimeTimestampAdapter;
 import me.pagar.util.JSONUtils;
 
-public class Recipient  extends PagarMeModel<String> {
+public class Recipient extends PagarMeModel<String> {
 
     @Expose
     @SerializedName(value = "automatic_anticipation_enabled")
@@ -149,26 +150,52 @@ public class Recipient  extends PagarMeModel<String> {
         }.getType());
     }
 
-    public Balance balance() throws PagarMeException {
+    public BalanceOperation getBalanceOperation(String id) throws PagarMeException {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
-                String.format("/%s/%s/%s", getClassName(), getId(), Balance.class.getSimpleName().toLowerCase()));
-
-        return JSONUtils.getAsObject((JsonObject) request.execute(), Balance.class);
+                String.format("/%s/%s/%s/%s/%s", getClassName(), getId(), Balance.class.getSimpleName().toLowerCase(), "operations", id));
+        return JSONUtils.getAsObject((JsonObject) request.execute(), BalanceOperation.class);
     }
 
-    public Limit getMaxAnticipationLimit(DateTime paymentDate, Timeframe timeframe) throws PagarMeException{
+    public Collection<BalanceOperation> getBalanceOperations(int count, int page) throws PagarMeException {
+        final Transaction transaction = new Transaction();
+
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
+                  String.format("/%s/%s/%s/%s", getClassName(), getId(), Balance.class.getSimpleName().toLowerCase(), "operations"));
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("count", count);
+        params.put("page", page);
+        request.setParameters(params);
+        return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<BalanceOperation>>() {
+        }.getType());
+
+    }
+    
+    public Collection<BalanceOperation> getBalanceOperations() throws PagarMeException{
+        return getBalanceOperations(10,1);
+    }
+
+    public Balance balance() throws PagarMeException {
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
+                String.format("/%s/%s/%s", getClassName(), getId(), Balance.class
+                        .getSimpleName().toLowerCase()));
+
+        return JSONUtils.getAsObject((JsonObject) request.execute(), Balance.class
+        );
+    }
+
+    public Limit getMaxAnticipationLimit(DateTime paymentDate, Timeframe timeframe) throws PagarMeException {
         BulkAnticipationLimits limits = getAnticipationLimits(paymentDate, timeframe);
         Limit max = limits.getMaximum();
         return max;
     }
 
-    public Limit getMinAnticipationLimit(DateTime paymentDate, Timeframe timeframe) throws PagarMeException{
+    public Limit getMinAnticipationLimit(DateTime paymentDate, Timeframe timeframe) throws PagarMeException {
         BulkAnticipationLimits limits = getAnticipationLimits(paymentDate, timeframe);
         Limit min = limits.getMinimum();
         return min;
     }
 
-    private BulkAnticipationLimits getAnticipationLimits(DateTime paymentDate, Timeframe timeframe) throws PagarMeException{
+    private BulkAnticipationLimits getAnticipationLimits(DateTime paymentDate, Timeframe timeframe) throws PagarMeException {
         validateId();
         String path = String.format("/%s/%s/bulk_anticipations/limits", getClassName(), getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
@@ -177,59 +204,65 @@ public class Recipient  extends PagarMeModel<String> {
         parameters.put("timeframe", timeframe.name().toLowerCase());
         request.setParameters(parameters);
         JsonObject response = request.execute();
-        BulkAnticipationLimits limits = JSONUtils.getAsObject(response, BulkAnticipationLimits.class);
+        BulkAnticipationLimits limits = JSONUtils.getAsObject(response, BulkAnticipationLimits.class
+        );
         return limits;
     }
 
-    public BulkAnticipation anticipate(BulkAnticipation anticipation) throws PagarMeException{
+    public BulkAnticipation anticipate(BulkAnticipation anticipation) throws PagarMeException {
         validateId();
         String path = String.format("/%s/%s/%s", getClassName(), getId(), anticipation.getClassName());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
         Map<String, Object> parameters = JSONUtils.objectToMap(anticipation, new DateTimeTimestampAdapter());
         request.setParameters(parameters);
         JsonObject response = request.execute();
-        BulkAnticipation newAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
+        BulkAnticipation newAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class
+        );
         return newAnticipation;
     }
 
-    public void deleteAnticipation(BulkAnticipation anticipation) throws PagarMeException{
+    public void deleteAnticipation(BulkAnticipation anticipation) throws PagarMeException {
         validateId();
         String path = String.format("/%s/%s/%s/%s", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.DELETE, path);
         request.execute();
     }
 
-    public BulkAnticipation cancelAnticipation(BulkAnticipation anticipation) throws PagarMeException{
+    public BulkAnticipation cancelAnticipation(BulkAnticipation anticipation) throws PagarMeException {
         validateId();
         String path = String.format("/%s/%s/%s/%s/cancel", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
         JsonObject response = request.execute();
-        BulkAnticipation canceledAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
+        BulkAnticipation canceledAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class
+        );
         return canceledAnticipation;
     }
 
-    public BulkAnticipation confirmBulkAnticipation(BulkAnticipation anticipation) throws PagarMeException{
+    public BulkAnticipation confirmBulkAnticipation(BulkAnticipation anticipation) throws PagarMeException {
         validateId();
         String path = String.format("/%s/%s/%s/%s/confirm", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
         JsonObject response = request.execute();
-        BulkAnticipation confirmedAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
+        BulkAnticipation confirmedAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class
+        );
         return confirmedAnticipation;
     }
 
-    public Collection<BulkAnticipation> findAnticipations(int count, int page) throws PagarMeException{
+    public Collection<BulkAnticipation> findAnticipations(int count, int page) throws PagarMeException {
         validateId();
         String path = String.format("/%s/%s/bulk_anticipations", getClassName(), getId());
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
         request.getParameters().put("count", count);
         request.getParameters().put("page", page);
         JsonArray response = request.<JsonArray>execute();
-        Collection<BulkAnticipation> anticipations = JSONUtils.getAsList(response, new TypeToken<Collection<BulkAnticipation>>(){}.getType());
+        Collection<BulkAnticipation> anticipations = JSONUtils.getAsList(response, new TypeToken<Collection<BulkAnticipation>>() {
+        }.getType());
         return anticipations;
     }
 
     public Recipient refresh() throws PagarMeException {
-        final Recipient other = JSONUtils.getAsObject(refreshModel(), Recipient.class);
+        final Recipient other = JSONUtils.getAsObject(refreshModel(), Recipient.class
+        );
         copy(other);
         flush();
         return other;
@@ -245,15 +278,14 @@ public class Recipient  extends PagarMeModel<String> {
         this.transferInterval = other.transferInterval;
         this.updatedAt = other.updatedAt;
         this.bankAccount = other.bankAccount;
+
     }
 
     public enum TransferInterval {
         @SerializedName("daily")
         DAILY,
-
         @SerializedName("weekly")
         WEEKLY,
-
         @SerializedName("monthly")
         MONTHLY
     }
