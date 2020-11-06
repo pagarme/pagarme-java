@@ -304,6 +304,13 @@ public class Transaction extends PagarMeModel<Integer> {
     private String boletoBarcode;
 
     /**
+     * Código de barras do boleto gerado na transação
+     */
+    @Expose(serialize = false)
+    @SerializedName("pix_qr_code")
+    private String pixQRCode;
+
+    /**
      * Mostra se a transação foi criada utilizando a API Key ou Encryption Key.
      */
     @Expose(serialize = false)
@@ -363,6 +370,13 @@ public class Transaction extends PagarMeModel<Integer> {
      */
     @Expose
     private DateTime boletoExpirationDate;
+
+    /**
+     * Data de expiração do pix (em ISODate)
+     */
+    @Expose
+    @SerializedName(value = "pix_expiration_date")
+    private DateTime pixExpirationDate;
 
     /**
      * Data de atualização da transação no formato ISODate
@@ -441,6 +455,9 @@ public class Transaction extends PagarMeModel<Integer> {
 
     @Expose
     private Collection<Item> items;
+
+    @Expose
+    private Collection<PixAdditionalField> pixAdditionalFields;
 
     public Transaction() {
         super();
@@ -667,6 +684,10 @@ public class Transaction extends PagarMeModel<Integer> {
         return boletoExpirationDate;
     }
 
+    public DateTime getPixExpirationDate(){
+        return pixExpirationDate;
+    }
+
     /**
      * @return {@link #card}
      */
@@ -723,6 +744,10 @@ public class Transaction extends PagarMeModel<Integer> {
 
     public Collection<Item> getItems() {
         return items;
+    }
+
+    public Collection<PixAdditionalField> getPixAdditionalFields() {
+        return pixAdditionalFields;
     }
 
     public void setAsync(final Boolean async) {
@@ -785,6 +810,11 @@ public class Transaction extends PagarMeModel<Integer> {
         addUnsavedProperty("boletoExpirationDate");
     }
 
+    public void setPixExpirationDate(final DateTime pixExpirationDate) {
+        this.pixExpirationDate = pixExpirationDate;
+        addUnsavedProperty("pixExpirationDate");
+    }
+
     public void setMetadata(final Map<String, Object> metadata) {
         this.metadata = metadata;
         addUnsavedProperty("metadata");
@@ -813,6 +843,10 @@ public class Transaction extends PagarMeModel<Integer> {
 
     public void setItems(final Collection<Item> items) {
         this.items = items;
+    }
+
+    public void setPixAdditionalFields(final Collection<PixAdditionalField> pixAdditionalFields) {
+        this.pixAdditionalFields = pixAdditionalFields;
     }
 
     public Collection<SplitRule> getSplitRules() {
@@ -1159,6 +1193,7 @@ public class Transaction extends PagarMeModel<Integer> {
         this.boletoUrl = other.boletoUrl;
         this.boletoBarcode = other.boletoBarcode;
         this.boletoExpirationDate = other.boletoExpirationDate;
+        this.pixExpirationDate = other.pixExpirationDate;
         this.referer = other.referer;
         this.ip = other.ip;
         this.cardId = other.cardId;
@@ -1224,7 +1259,10 @@ public class Transaction extends PagarMeModel<Integer> {
         BOLETO,
 
         @SerializedName("debit_card")
-        DEBIT_CARD
+        DEBIT_CARD,
+
+        @SerializedName("pix")
+        PIX
     }
 
     public enum CaptureMethod {
@@ -1274,7 +1312,7 @@ public class Transaction extends PagarMeModel<Integer> {
 
         /**
          * Transação aguardando pagamento (status para transações criadas com
-         * boleto bancário).
+         * boleto bancário ou pix).
          */
         @SerializedName("waiting_payment")
         WAITING_PAYMENT,
