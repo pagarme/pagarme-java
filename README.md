@@ -1,10 +1,4 @@
-Pagar.me Java Library
-===========================
 [![Build Status](https://travis-ci.org/pagarme/pagarme-java.svg?token=dqgmPH2JHKsHRgaNHZxf&branch=master)](https://travis-ci.org/pagarme/pagarme-java)
-
-## Requirements
-
-- Java >= 6 && <= 8
 
 # Introdução
 
@@ -332,11 +326,13 @@ planF.save();
 Para essa seção, você precisará dessas importações:
 
 ```java
+import java.util.Collection;
 import me.pagar.model.Customer;
 import me.pagar.model.Address;
 import me.pagar.model.Card;
 import me.pagar.model.Phone;
 import me.pagar.model.Subscription;
+import me.pagar.model.SplitRule;
 ```
 
 ### Criando assinaturas
@@ -476,7 +472,9 @@ Para obter informações sobre postbacks, 3 informações serão necessárias, s
 Para essa seção, você precisará dessa importação:
 
 ```java
+import java.util.Collection;
 import me.pagar.model.Postback;
+import me.pagar.model.Transaction;
 ```
 
 ### Retornando postbacks
