@@ -304,7 +304,7 @@ public class Transaction extends PagarMeModel<Integer> {
     private String boletoBarcode;
 
     /**
-     * Código de barras do boleto gerado na transação
+     * Código QR do Pix gerado na transação
      */
     @Expose(serialize = false)
     @SerializedName("pix_qr_code")
@@ -686,6 +686,13 @@ public class Transaction extends PagarMeModel<Integer> {
 
     public DateTime getPixExpirationDate(){
         return pixExpirationDate;
+    }
+
+    /**
+     * @return {@link #pixQRCode}
+     */
+    public String getPixQRCode() {
+        return pixQRCode;
     }
 
     /**
@@ -1194,6 +1201,7 @@ public class Transaction extends PagarMeModel<Integer> {
         this.boletoBarcode = other.boletoBarcode;
         this.boletoExpirationDate = other.boletoExpirationDate;
         this.pixExpirationDate = other.pixExpirationDate;
+        this.pixQRCode = other.pixQRCode;
         this.referer = other.referer;
         this.ip = other.ip;
         this.cardId = other.cardId;
