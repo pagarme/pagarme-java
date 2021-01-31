@@ -259,7 +259,7 @@ public class TransactionTest extends BaseTest {
         transaction2 = testEndpoints.payBoleto(transaction2);
 
         BankAccount bankAccount = (BankAccount)new BankAccount().findCollection(1, 0).toArray()[0];
-        transaction.refund(bankAccount);
+        transaction.refund(AMOUNT, bankAccount);
 
         Assert.assertEquals(Transaction.Status.PENDING_REFUND, transaction.getStatus());
     }

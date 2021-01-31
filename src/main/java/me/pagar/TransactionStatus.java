@@ -6,7 +6,8 @@ public enum TransactionStatus {
 	waiting_payment("waiting_payment"),
 	refused("refused"),
 	paid("paid"),
-	refunded("refunded");
+	refunded("refunded"),
+	pending_refund("pending_refund");
 	
 	private String status;
 	TransactionStatus(String status){

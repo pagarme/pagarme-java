@@ -3,6 +3,7 @@ package me.pagar.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.HttpMethod;
 
@@ -280,6 +281,19 @@ public class Recipient  extends PagarMeModel<String> {
         JsonArray response = request.<JsonArray>execute();
         Collection<BulkAnticipation> anticipations = JSONUtils.getAsList(response, new TypeToken<Collection<BulkAnticipation>>(){}.getType());
         return anticipations;
+    }
+
+    public Optional<BulkAnticipation> getAnticipation(String id) throws PagarMeException{
+        validateId();
+        String path = String.format("/%s/%s/bulk_anticipations", getClassName(), getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
+        request.getParameters().put("id", id);
+        JsonArray response = request.<JsonArray>execute();
+        Collection<BulkAnticipation> anticipations = JSONUtils.getAsList(response, new TypeToken<Collection<BulkAnticipation>>(){}.getType());
+        if (anticipations != null && !anticipations.isEmpty()) {
+            return Optional.of(anticipations.iterator().next());
+        }
+        return Optional.empty();
     }
 
     public Recipient refresh() throws PagarMeException {

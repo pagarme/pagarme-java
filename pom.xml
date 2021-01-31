@@ -186,6 +186,19 @@
             <autoReleaseAfterClose>true</autoReleaseAfterClose>
           </configuration>
         </plugin>
+	    <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <!-- compile for Java 1.8 -->
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <optimize>true</optimize>
+                                <debug>true</debug>
+                </configuration>
+            </plugin>
       </plugins>
     </pluginManagement>
   </build>
