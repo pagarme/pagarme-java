@@ -1,11 +1,11 @@
 package me.pagar.model;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.HttpMethod;
 
@@ -20,233 +20,251 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.internal.LinkedTreeMap;
 
 import me.pagar.model.filter.QueriableFields;
 import me.pagar.util.DateTimeIsodateAdapter;
 import me.pagar.util.JSONUtils;
 import me.pagar.util.LocalDateAdapter;
 
-
 public abstract class PagarMeModel<PK extends Serializable> {
 
-    /**
-     * Número identificador da transação
-     */
-    @Expose(serialize = false)
-    @SerializedName("id")
-    private PK id;
+	/**
+	 * Número identificador da transação
+	 */
+	@Expose(serialize = false)
+	@SerializedName("id")
+	protected PK id;
 
-    /**
-     * Data de criação da transação no formato ISODate
-     */
-    @Expose(serialize = false)
-    @SerializedName("date_created")
-    private DateTime createdAt;
+	/**
+	 * Data de criação da transação no formato ISODate
+	 */
+	@Expose(serialize = false)
+	@SerializedName("date_created")
+	private DateTime createdAt;
 
-    private transient String className;
+	private transient String className;
 
-    private transient Collection<String> dirtyProperties;
+	private transient Collection<String> dirtyProperties;
 
-    protected void validateId() {
+	public PagarMeModel() {
+		className		= CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, English.plural(getClass().getSimpleName()));
+		dirtyProperties	= new ArrayList<String>();
+	}
 
-        if (getId() == null) {
-            throw new IllegalArgumentException("The Object ID must be set in order to use this method.");
-        }
+	protected void addUnsavedProperty(final String name) {
+		for (String s : dirtyProperties) {
+			if (s.startsWith(name.concat("."))) {
+				dirtyProperties.remove(s);
+			}
+		}
+		dirtyProperties.add(name);
+	}
 
-    }
+	protected <T extends PagarMeModel<PK>> void copy(T other) {
+		this.id			= other.getId();
+		this.createdAt	= other.getCreatedAt();
+	}
 
-    public PagarMeModel() {
-        className = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, English.plural(getClass().getSimpleName()));
-        dirtyProperties = new ArrayList<String>();
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-    /**
-     * {@link #id}
-     */
-    public PK getId() {
-        return id;
-    }
+		final PagarMeModel<?> that = (PagarMeModel<?>) o;
 
-    /**
-     * {@link #createdAt}
-     */
-    public DateTime getCreatedAt() {
-        return createdAt;
-    }
+		return id.equals(that.id);
 
-    public String getClassName() {
-        return className;
-    }
-    
-    protected void setCreatedAt(DateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+	}
 
-    public void setId(final PK id) {
-        this.id = id;
-    }
+	protected void flush() {
+		dirtyProperties.clear();
+	}
 
-    public void setClassName(final String className) {
-        this.className = className;
-    }
+	protected JsonObject get(final PK id) throws PagarMeException {
+		validateId();
 
-    protected JsonObject refreshModel() throws PagarMeException {
-        return get(this.id);
-    }
+		if (null == id) {
+			throw new IllegalArgumentException("You must provide an ID to get this object data");
+		}
 
-    protected JsonObject get(final PK id) throws PagarMeException {
-        validateId();
+		final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", className, id));
 
-        if (null == id) {
-            throw new IllegalArgumentException("You must provide an ID to get this object data");
-        }
+		return request.execute();
+	}
 
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", className, id));
+	public String getClassName() {
+		return className;
+	}
 
-        return request.execute();
-    }
-    
-    protected JsonObject getThrough(PagarMeModel modelFilter) throws PagarMeException {
-        validateId();
+	/**
+	 * {@link #createdAt}
+	 */
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
 
-        if (null == id) {
-            throw new IllegalArgumentException("You must provide an ID to get this object data");
-        }
-        String path = "";
-        path += "/" + this.getClassName() + "/" + this.getId();
-        path += "/" + modelFilter.getClassName() + "/" + modelFilter.getId();
+	/**
+	 * {@link #id}
+	 */
+	public PK getId() {
+		return id;
+	}
 
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
+	protected JsonObject getThrough(PagarMeModel modelFilter) throws PagarMeException {
+		validateId();
 
-        return request.execute();
-    }
+		if (null == id) {
+			throw new IllegalArgumentException("You must provide an ID to get this object data");
+		}
+		String path = "";
+		path	+= "/" + this.getClassName() + "/" + this.getId();
+		path	+= "/" + modelFilter.getClassName() + "/" + modelFilter.getId();
 
-    protected JsonArray paginate(final Integer totalPerPage) throws PagarMeException {
-        return paginate(totalPerPage, 1);
-    }
+		final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
 
-    protected JsonArray paginate(final Integer totalPerPage, Integer page) throws PagarMeException {
-        return paginate(totalPerPage, page, null);
-    }
+		return request.execute();
+	}
 
-    protected JsonArray paginate(final Integer totalPerPage, Integer page, QueriableFields modelFilter) throws PagarMeException {
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 
-        if (null != totalPerPage && totalPerPage > 0) {
-            parameters.put("count", totalPerPage);
-        }
+	protected JsonArray paginate(final Integer totalPerPage) throws PagarMeException {
+		return paginate(totalPerPage, 1);
+	}
 
-        if (null != page && page > 0) {
-            parameters.put("page", page);
-        }
-        
-        String path = "/" + getClassName();
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
-        request.getParameters().putAll(parameters);
+	protected JsonArray paginate(final Integer totalPerPage, Integer page) throws PagarMeException {
+		return paginate(totalPerPage, page, null);
+	}
 
-        if(modelFilter != null){
-            Map<String, Object> filter = modelFilter.toMap();
-            request.getParameters().putAll(filter);
-        }
+	protected JsonArray paginate(final Integer totalPerPage, Integer page, QueriableFields modelFilter) throws PagarMeException {
+		final Map<String, Object> parameters = new HashMap<String, Object>();
 
-        return request.execute();
-    }
+		if (null != totalPerPage && totalPerPage > 0) {
+			parameters.put("count", totalPerPage);
+		}
 
-    protected <T extends PagarMeModel> JsonArray  paginateThrough(final Integer totalPerPage, Integer page, QueriableFields modelFilter) throws PagarMeException {
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+		if (null != page && page > 0) {
+			parameters.put("page", page);
+		}
 
-        if (null != totalPerPage && 0 != totalPerPage) {
-            parameters.put("count", totalPerPage);
-        }
+		String					path	= "/" + getClassName();
+		final PagarMeRequest	request	= new PagarMeRequest(HttpMethod.GET, path);
+		request.getParameters().putAll(parameters);
 
-        if (null == page || 0 >= page) {
-            page = 1;
-        }
-        parameters.put("page", page);
+		if (modelFilter != null) {
+			Map<String, Object> filter = modelFilter.toMap();
+			request.getParameters().putAll(filter);
+		}
 
-        String path = "/" + this.getClassName() + "/" + this.getId() + "/" + modelFilter.pagarmeRelatedModel();
-        Map<String, Object> filter = new  HashMap<String, Object>();
-        if(modelFilter != null){
-            filter = modelFilter.toMap();
-        }
+		return request.execute();
+	}
 
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
-        request.getParameters().putAll(parameters);
-        request.getParameters().putAll(filter);
+	protected <T extends PagarMeModel> JsonArray paginateThrough(final Integer totalPerPage, Integer page, QueriableFields modelFilter)
+			throws PagarMeException {
+		final Map<String, Object> parameters = new HashMap<String, Object>();
 
-        return request.execute();
-    }
+		if (null != totalPerPage && 0 != totalPerPage) {
+			parameters.put("count", totalPerPage);
+		}
 
-    protected <T extends PagarMeModel<PK>> T save(final Class<T> clazz) throws PagarMeException {
+		if (null == page || 0 >= page) {
+			page = 1;
+		}
+		parameters.put("page", page);
 
-        if (!validate()) {
-            return null;
-        }
+		String				path	= "/" + this.getClassName() + "/" + this.getId() + "/" + modelFilter.pagarmeRelatedModel();
+		Map<String, Object>	filter	= new HashMap<String, Object>();
+		if (modelFilter != null) {
+			filter = modelFilter.toMap();
+		}
 
-        final PagarMeRequest request = null == id ?
-                new PagarMeRequest(HttpMethod.POST, String.format("/%s", className)) :
-                new PagarMeRequest(HttpMethod.PUT, String.format("/%s/%s/", className, id));
-        request.setParameters(JSONUtils.objectToMap(this));
+		final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, path);
+		request.getParameters().putAll(parameters);
+		request.getParameters().putAll(filter);
 
-        final JsonElement element = request.execute();
-        flush();
+		return request.execute();
+	}
 
-        return JSONUtils.getAsObject((JsonObject) element, clazz);
-    }
+	protected JsonObject refreshModel() throws PagarMeException {
+		return get(this.id);
+	}
 
-    protected void addUnsavedProperty(final String name) {
-        for (String s : dirtyProperties) {
-            if (s.startsWith(name.concat("."))) {
-                dirtyProperties.remove(s);
-            }
-        }
-        dirtyProperties.add(name);
-    }
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected <T extends PagarMeModel<PK>> T save(final Class<T> clazz) throws PagarMeException {
 
-    protected void flush() {
-        dirtyProperties.clear();
-    }
-    
-    protected <T extends PagarMeModel<PK>> void copy(T other){
-        this.id = other.getId();
-        this.createdAt = other.getCreatedAt();
-    }
+		if (!validate()) {
+			return null;
+		}
 
-    protected boolean validate() {
-        return true;
-    }
+		final PagarMeRequest request = null == id ? new PagarMeRequest(HttpMethod.POST, String.format("/%s", className))
+				: new PagarMeRequest(HttpMethod.PUT, String.format("/%s/%s/", className, id));
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+		Map<String, Object> jsonMap = JSONUtils.objectToMap(this);
 
-        final PagarMeModel<?> that = (PagarMeModel<?>) o;
+		jsonMap.forEach((strCara, obj) -> {
+			if (strCara.equals("customer")) {
+				LinkedTreeMap	mp	= (LinkedTreeMap) obj;
+				Set				s	= mp.keySet();
+				if (mp.containsKey("customer_id")) {
+					Double valor = (Double) mp.get("customer_id");
+					if (valor != 0) {
+						mp.put("id", mp.get("customer_id"));
+					}
+					mp.remove("customer_id");
+				}
+			}
+		});
 
-        return id.equals(that.id);
+		request.setParameters(jsonMap);
+		// request.setParameters(JSONUtils.objectToMap(this));
 
-    }
+		final JsonElement element = request.execute();
+		flush();
 
-    public String toJson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(DateTime.class, new DateTimeIsodateAdapter())
-                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-                .create()
-                .toJson(this);
-    }
+		return JSONUtils.getAsObject((JsonObject) element, clazz);
+	}
 
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
+	public void setClassName(final String className) {
+		this.className = className;
+	}
 
-    @Override
-    public String toString() {
-        try {
-            return this.toJson();
-        } catch (UnsupportedOperationException e) {
-            return getClass().getSimpleName().concat(String.format("=(%s)", this.id));
-        }
-    }
+	protected void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public void setId(final PK id) {
+		this.id = id;
+	}
+
+	public String toJson() {
+		return new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeIsodateAdapter())
+				.registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create().toJson(this);
+	}
+
+	@Override
+	public String toString() {
+		try {
+			return this.toJson();
+		} catch (UnsupportedOperationException e) {
+			return getClass().getSimpleName().concat(String.format("=(%s)", this.id));
+		}
+	}
+
+	protected boolean validate() {
+		return true;
+	}
+
+	protected void validateId() {
+
+		if (getId() == null) {
+			throw new IllegalArgumentException("The Object ID must be set in order to use this method.");
+		}
+
+	}
 
 }
