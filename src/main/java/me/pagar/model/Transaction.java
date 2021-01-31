@@ -421,7 +421,7 @@ public class Transaction extends PagarMeModel<Integer> {
 
     @Expose(serialize = false)
     @SerializedName("event")
-    private Event event;
+    private EventEnum event;
 
     @Expose(serialize = false)
     @SerializedName("old_status")
@@ -712,7 +712,7 @@ public class Transaction extends PagarMeModel<Integer> {
     /**
      * @return {@link #event}
      */
-    public Event getEvent() {
+    public EventEnum getEvent() {
         return event;
     }
 
@@ -1001,6 +1001,19 @@ public class Transaction extends PagarMeModel<Integer> {
     }
 
     /**
+     * Retorna os Eventos de uma transação
+     * 
+     * @return Collection<Event>
+     * @throws PagarMeException
+     */
+    public Collection<Event> getEvents() throws PagarMeException{
+        final Event event = new Event();
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
+                String.format("/%s/%s/%s", getClassName(), getId(), event.getClassName()));
+        return JSONUtils.getAsList((JsonArray) request.execute(), new TypeToken<Collection<Event>>() {
+        }.getType());
+    }
+    /**
      * Com essa rota você pode reenviar qualquer {@link Postback} que já foi
      * enviado de uma transação. Lembrando que caso o envio de um
      * {@link Postback} falhe ou seu servidor não o receba, nós o retentamos
@@ -1248,7 +1261,7 @@ public class Transaction extends PagarMeModel<Integer> {
 
     }
 
-    public enum Event {
+    public enum EventEnum {
 
         @SerializedName("transaction_status_changed")
         TRANSACTION_STATUS_CHANGED
