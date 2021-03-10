@@ -17,12 +17,19 @@ public class Transfer extends PagarMeModel<String> {
 
     @Expose(serialize=false)
     private Type type;
+
     @Expose(serialize=false)
     private Status status;
+
     @Expose(serialize=false)
     private Integer fee;
+
+    @Expose(serialize=false)
+    private DateTime fundingDate;
+
     @Expose(serialize=false)
     private DateTime fundingEstimatedDate;
+
     @Expose(serialize=false)
     private BankAccount bankAccount;
 
@@ -31,6 +38,7 @@ public class Transfer extends PagarMeModel<String> {
 
     @Expose(deserialize=false)
     private Integer bankAccountId;
+
     @Expose(deserialize=false)
     private String recipientId;
 
@@ -38,7 +46,7 @@ public class Transfer extends PagarMeModel<String> {
         super();
     }
 
-    public Transfer(Integer amount, String recipientId){
+    public Transfer(Integer amount, String recipientId) {
         super();
         this.recipientId = recipientId;
         this.amount = amount;
@@ -61,6 +69,14 @@ public class Transfer extends PagarMeModel<String> {
 
     public Integer getFee() {
         return fee;
+    }
+
+    public DateTime getFundingDate() {
+        return fundingDate;
+    }
+
+    public void setFundingDate(DateTime fundingDate) {
+        this.fundingDate = fundingDate;
     }
 
     public DateTime getFundingEstimatedDate() {
@@ -150,12 +166,16 @@ public class Transfer extends PagarMeModel<String> {
     public enum Status{
         @SerializedName("pending_transfer")
         PENDING_TRANSFER,
+
         @SerializedName("transferred")
         TRANSFERRED,
+
         @SerializedName("failed")
         FAILED,
+
         @SerializedName("processing")
         PROCESSING,
+
         @SerializedName("canceled")
         CANCELED
     }
@@ -163,8 +183,10 @@ public class Transfer extends PagarMeModel<String> {
     public enum Type{
         @SerializedName("ted")
         TED,
+
         @SerializedName("doc")
         DOC,
+
         @SerializedName("credito_em_conta")
         CREDITO_EM_CONTA
     }
