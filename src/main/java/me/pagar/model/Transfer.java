@@ -17,12 +17,16 @@ public class Transfer extends PagarMeModel<String> {
 
     @Expose(serialize=false)
     private Type type;
+
     @Expose(serialize=false)
     private Status status;
+
     @Expose(serialize=false)
     private Integer fee;
+
     @Expose(serialize=false)
     private DateTime fundingEstimatedDate;
+
     @Expose(serialize=false)
     private BankAccount bankAccount;
 
@@ -31,6 +35,7 @@ public class Transfer extends PagarMeModel<String> {
 
     @Expose(deserialize=false)
     private Integer bankAccountId;
+
     @Expose(deserialize=false)
     private String recipientId;
 
@@ -38,13 +43,13 @@ public class Transfer extends PagarMeModel<String> {
         super();
     }
 
-    public Transfer(Integer amount, String recipientId){
+    public Transfer(Integer amount, String recipientId) {
         super();
         this.recipientId = recipientId;
         this.amount = amount;
     }
 
-    public Transfer(Integer amount, String recipientId, Integer bankAccountId){
+    public Transfer(Integer amount, String recipientId, Integer bankAccountId) {
         super();
         this.amount = amount;
         this.recipientId = recipientId;
@@ -99,14 +104,14 @@ public class Transfer extends PagarMeModel<String> {
         this.recipientId = recipientId;
     }
 
-    public Transfer save() throws PagarMeException{
+    public Transfer save() throws PagarMeException {
         final Transfer saved = super.save(getClass());
         copy(saved);
 
         return saved;
     }
 
-    public Transfer cancel() throws PagarMeException{
+    public Transfer cancel() throws PagarMeException {
         validateId();
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST,
@@ -122,7 +127,7 @@ public class Transfer extends PagarMeModel<String> {
         return other;
     }
 
-    public Transfer find(String id) throws PagarMeException{
+    public Transfer find(String id) throws PagarMeException {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 
         final Transfer other = JSONUtils.getAsObject((JsonObject) request.execute(), Transfer.class);
@@ -137,7 +142,7 @@ public class Transfer extends PagarMeModel<String> {
         }.getType());
     }
 
-    private void copy(Transfer other){
+    private void copy(Transfer other) {
         super.copy(other);
         this.amount = other.amount;
         this.bankAccount = other.bankAccount;
@@ -150,12 +155,16 @@ public class Transfer extends PagarMeModel<String> {
     public enum Status{
         @SerializedName("pending_transfer")
         PENDING_TRANSFER,
+
         @SerializedName("transferred")
         TRANSFERRED,
+
         @SerializedName("failed")
         FAILED,
+
         @SerializedName("processing")
         PROCESSING,
+
         @SerializedName("canceled")
         CANCELED
     }
@@ -163,8 +172,10 @@ public class Transfer extends PagarMeModel<String> {
     public enum Type{
         @SerializedName("ted")
         TED,
+
         @SerializedName("doc")
         DOC,
+
         @SerializedName("credito_em_conta")
         CREDITO_EM_CONTA
     }
