@@ -25,6 +25,9 @@ public class Transfer extends PagarMeModel<String> {
     private Integer fee;
 
     @Expose(serialize=false)
+    private DateTime fundingDate;
+
+    @Expose(serialize=false)
     private DateTime fundingEstimatedDate;
 
     @Expose(serialize=false)
@@ -66,6 +69,14 @@ public class Transfer extends PagarMeModel<String> {
 
     public Integer getFee() {
         return fee;
+    }
+
+    public DateTime getFundingDate() {
+        return fundingDate;
+    }
+
+    public void setFundingDate(DateTime fundingDate) {
+        this.fundingDate = fundingDate;
     }
 
     public DateTime getFundingEstimatedDate() {

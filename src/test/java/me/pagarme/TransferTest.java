@@ -107,6 +107,7 @@ public class TransferTest extends BaseTest {
         Assert.assertEquals(transfer.getFundingEstimatedDate(), foundTransfer.getFundingEstimatedDate());
         Assert.assertEquals(transfer.getStatus(), foundTransfer.getStatus());
         Assert.assertEquals(transfer.getType(), foundTransfer.getType());
+        Assert.assertEquals(transfer.getFundingDate(), foundTransfer.getFundingDate());
     }
 
     @Test
