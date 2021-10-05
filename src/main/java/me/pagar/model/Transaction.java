@@ -67,6 +67,13 @@ public class Transaction extends PagarMeModel<Integer> {
     @Expose
     private Integer installments;
 
+    /**
+     * Código de referência da transação
+     */
+    @Expose(deserialize = false)
+    @SerializedName("reference_key")
+    private String referenceKey;
+
     @Expose(deserialize = false)
     @SerializedName("card_id")
     private String cardId;
@@ -564,6 +571,13 @@ public class Transaction extends PagarMeModel<Integer> {
         return cost;
     }
 
+     /**
+     * @return {@link #referenceKey }
+     */
+    public String getReferenceKey() {
+        return referenceKey;
+    }
+
     /**
      * @return {@link #acquirerResponseCode}
      */
@@ -775,6 +789,11 @@ public class Transaction extends PagarMeModel<Integer> {
     public void setInstallments(final Integer installments) {
         this.installments = installments;
         addUnsavedProperty("installments");
+    }
+
+    public void setReferenceKey(final String referenceKey) {
+        this.referenceKey = referenceKey;
+        addUnsavedProperty("referenceKey");
     }
 
     public void setSoftDescriptor(final String softDescriptor) {
@@ -1203,6 +1222,7 @@ public class Transaction extends PagarMeModel<Integer> {
         this.pixExpirationDate = other.pixExpirationDate;
         this.pixQRCode = other.pixQRCode;
         this.referer = other.referer;
+        this.referenceKey = other.referenceKey;
         this.ip = other.ip;
         this.cardId = other.cardId;
         this.metadata = other.metadata;
