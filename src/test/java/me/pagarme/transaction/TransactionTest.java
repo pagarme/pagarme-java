@@ -12,11 +12,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
+import java.util.List;
 
 import me.pagar.model.Address;
 import me.pagar.model.BankAccount;
 import me.pagar.model.Customer;
 import me.pagar.model.PagarMeException;
+import me.pagar.model.Payable;
 import me.pagar.model.Phone;
 import me.pagar.model.Recipient;
 import me.pagar.model.SplitRule;
@@ -28,6 +30,7 @@ import me.pagarme.factory.CustomerFactory;
 import me.pagarme.factory.TransactionFactory;
 import me.pagarme.helper.TestEndpoints;
 import org.joda.time.DateTime;
+import static org.junit.Assert.assertEquals;
 
 public class TransactionTest extends BaseTest {
 
@@ -45,11 +48,11 @@ public class TransactionTest extends BaseTest {
     }
 
     @Test
-    public void testCreatedDateExistence() throws PagarMeException{
+    public void testCreatedDateExistence() throws PagarMeException {
 
         transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
         transaction.save();
-        
+
         Assert.assertNotNull(transaction.getCreatedAt());
         Assert.assertNotNull(transaction.getUpdatedAt());
     }
@@ -83,13 +86,13 @@ public class TransactionTest extends BaseTest {
         transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
         transaction.setCapture(true);
 
-        Map<String, Object> metadata =  new HashMap<String, Object>();
+        Map<String, Object> metadata = new HashMap<String, Object>();
         metadata.put("metadata1", "value1");
         metadata.put("metadata2", "value2");
 
         transaction.setMetadata(metadata);
         transaction.save();
-        
+
         Transaction foundTransaction = new Transaction().find(transaction.getId());
 
         Assert.assertEquals(foundTransaction.getPaymentMethod(), Transaction.PaymentMethod.CREDIT_CARD);
@@ -106,7 +109,7 @@ public class TransactionTest extends BaseTest {
         transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
         transaction.setCapture(true);
 
-        Map<String, Object> antifraudMetadata =  new HashMap<String, Object>();
+        Map<String, Object> antifraudMetadata = new HashMap<String, Object>();
         antifraudMetadata.put("antifraudMetadata1", "value1");
         antifraudMetadata.put("antifraudMetadata2", "value2");
 
@@ -145,7 +148,7 @@ public class TransactionTest extends BaseTest {
         transaction.setCapture(false);
         transaction.save();
 
-        Map<String, Object> metadata =  new HashMap<String, Object>();
+        Map<String, Object> metadata = new HashMap<String, Object>();
         metadata.put("metadata1", "value1");
         metadata.put("metadata2", "value2");
         transaction.setMetadata(metadata);
@@ -258,7 +261,7 @@ public class TransactionTest extends BaseTest {
         transaction2.save();
         transaction2 = testEndpoints.payBoleto(transaction2);
 
-        BankAccount bankAccount = (BankAccount)new BankAccount().findCollection(1, 0).toArray()[0];
+        BankAccount bankAccount = (BankAccount) new BankAccount().findCollection(1, 0).toArray()[0];
         transaction.refund(bankAccount);
 
         Assert.assertEquals(Transaction.Status.PENDING_REFUND, transaction.getStatus());
@@ -300,7 +303,7 @@ public class TransactionTest extends BaseTest {
     }
 
     @Test
-    public void testBoletoExpirationDate() throws Throwable{
+    public void testBoletoExpirationDate() throws Throwable {
         transaction = transactionFactory.createBoletoTransaction();
         transaction.setBoletoExpirationDate(DateTime.now().plusDays(4));
         transaction.save();
@@ -353,7 +356,7 @@ public class TransactionTest extends BaseTest {
         Assert.assertEquals(transactionPhone.getDdd(), "11");
         Assert.assertEquals(transactionPhone.getNumber(), "55284132");
     }
-    
+
     @Test
     public void testCaptureFalseWithSplitTransaction() throws Throwable {
 
@@ -362,11 +365,11 @@ public class TransactionTest extends BaseTest {
         transaction.setAmount(10000);
         Customer customer = customerFactory.create();
         transaction.setCustomer(customer);
-        
+
         transaction.save();
-        
+
         Collection<SplitRule> splitRules = new ArrayList<SplitRule>();
-        
+
         Recipient recipient1 = recipientFactory.create();
         recipient1.save();
         SplitRule splitRule = new SplitRule();
@@ -376,7 +379,7 @@ public class TransactionTest extends BaseTest {
         splitRule.setChargeProcessingFee(true);
         splitRules.add(splitRule);
 
-        Recipient recipient2  = recipientFactory.create();
+        Recipient recipient2 = recipientFactory.create();
         SplitRule splitRule2 = new SplitRule();
         recipient2.save();
         splitRule2.setRecipientId(recipient2.getId());
@@ -385,14 +388,14 @@ public class TransactionTest extends BaseTest {
         splitRule2.setChargeProcessingFee(true);
 
         splitRules.add(splitRule2);
-        
+
         Assert.assertEquals(transaction.getStatus(), Transaction.Status.AUTHORIZED);
         transaction.setSplitRules(splitRules);
         transaction.capture(transaction.getAmount());
         Transaction foundTransaction = new Transaction().find(transaction.getId());
         Collection<SplitRule> foundSplitRules = foundTransaction.getSplitRules();
         Assert.assertEquals(splitRules.size(), foundSplitRules.size());
-        
+
     }
 
     @Test
@@ -403,7 +406,7 @@ public class TransactionTest extends BaseTest {
         transaction.setAmount(10000);
 
         Collection<SplitRule> splitRules = new ArrayList<SplitRule>();
-        
+
         Recipient recipient1 = recipientFactory.create();
         recipient1.save();
         SplitRule splitRule = new SplitRule();
@@ -413,7 +416,7 @@ public class TransactionTest extends BaseTest {
         splitRule.setChargeProcessingFee(true);
         splitRules.add(splitRule);
 
-        Recipient recipient2  = recipientFactory.create();
+        Recipient recipient2 = recipientFactory.create();
         SplitRule splitRule2 = new SplitRule();
         recipient2.save();
         splitRule2.setRecipientId(recipient2.getId());
@@ -424,10 +427,53 @@ public class TransactionTest extends BaseTest {
         splitRules.add(splitRule2);
         transaction.setSplitRules(splitRules);
         transaction.save();
-        
+
         Transaction foundTransaction = new Transaction().find(transaction.getId());
         Collection<SplitRule> foundSplitRules = foundTransaction.getSplitRules();
         Assert.assertEquals(splitRules.size(), foundSplitRules.size());
+
+    }
+
+    @Test
+    public void testRefundWithSplit() throws Throwable {
+        transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
+        transaction.setCapture(true);
+        transaction.setAmount(10000);
+
+        Collection<SplitRule> splitRules = new ArrayList<SplitRule>();
+
+        Recipient recipient1 = recipientFactory.create();
+        recipient1.save();
+        SplitRule splitRule = new SplitRule();
+        splitRule.setRecipientId(recipient1.getId());
+        splitRule.setPercentage(50);
+        splitRule.setLiable(true);
+        splitRule.setChargeProcessingFee(true);
+        splitRules.add(splitRule);
+
+        Recipient recipient2 = recipientFactory.create();
+        SplitRule splitRule2 = new SplitRule();
+        recipient2.save();
+        splitRule2.setRecipientId(recipient2.getId());
+        splitRule2.setPercentage(50);
+        splitRule2.setLiable(true);
+        splitRule2.setChargeProcessingFee(true);
+
+        splitRules.add(splitRule2);
+        transaction.setSplitRules(splitRules);
+        transaction.save();
+        Transaction foundTransaction = new Transaction().find(transaction.getId());
+        List<SplitRule> foundSplitRules = (List<SplitRule>) foundTransaction.getSplitRules();
+        foundSplitRules.get(0).setAmount(2000);
+        foundSplitRules.get(1).setAmount(2000);
+        Integer refundedAmount = 4000;
+        foundTransaction.refundWithSplit(refundedAmount, foundSplitRules);
+        assertEquals(refundedAmount, foundTransaction.getRefundedAmount());
+        List<Payable> payables = (List<Payable>) foundTransaction.payables();
+        Integer payableExpectedAmount = -2000;
+        assertEquals(payables.get(0).getAmount(), payableExpectedAmount);
+        assertEquals(payables.get(1).getAmount(), payableExpectedAmount);
+        
         
     }
 //

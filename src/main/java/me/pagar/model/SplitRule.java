@@ -4,7 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
 
-public class SplitRule extends PagarMeModel<String>{
+public class SplitRule extends PagarMeModel<String> {
+
     @Expose
     @SerializedName("recipient_id")
     private String recipientId;
@@ -91,4 +92,5 @@ public class SplitRule extends PagarMeModel<String>{
     public void setClassName(String className) {
         throw new UnsupportedOperationException("Not allowed.");
     }
+
 }
