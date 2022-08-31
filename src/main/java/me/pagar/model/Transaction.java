@@ -1,5 +1,6 @@
 package me.pagar.model;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -970,7 +971,7 @@ public class Transaction extends PagarMeModel<Integer> {
      * @return Um {@link Payable}
      * @throws PagarMeException
      */
-    public Payable payables(final Integer payableId) throws PagarMeException {
+    public Payable payables(final BigInteger payableId) throws PagarMeException {
         validateId();
 
         final Payable splitRule = new Payable();
@@ -1179,7 +1180,7 @@ public class Transaction extends PagarMeModel<Integer> {
         }.getType());
     }
     
-    public Payable findPayable(Integer payableId) throws PagarMeException {
+    public Payable findPayable(BigInteger payableId) throws PagarMeException {
         validateId();
         Payable payable = new Payable();
         payable.setId(payableId);
