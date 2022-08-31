@@ -1,5 +1,6 @@
 package me.pagar.model;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 
@@ -17,7 +18,7 @@ import me.pagar.model.Transaction.PaymentMethod;
 import me.pagar.model.filter.QueriableFields;
 import me.pagar.util.JSONUtils;
 
-public class Payable extends PagarMeModel<Integer> {
+public class Payable extends PagarMeModel<BigInteger> {
 
     @Expose(serialize = false)
     private Integer amount;
@@ -62,7 +63,7 @@ public class Payable extends PagarMeModel<Integer> {
         super();
     }
 
-    public Payable find(Integer id) throws PagarMeException {
+    public Payable find(BigInteger id) throws PagarMeException {
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 
@@ -103,7 +104,7 @@ public class Payable extends PagarMeModel<Integer> {
     }
 
     @Override
-    public void setId(Integer id) {
+    public void setId(BigInteger id) {
         throw new UnsupportedOperationException("Not allowed.");
     }
 
