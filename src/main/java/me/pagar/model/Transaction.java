@@ -33,7 +33,7 @@ public class Transaction extends PagarMeModel<Integer> {
      */
     @Expose(serialize = false)
     @SerializedName("subscription_id")
-    private Integer subscriptionId;
+    private BigInteger subscriptionId;
 
     /**
      * Valor, em centavos, da transação
@@ -526,7 +526,7 @@ public class Transaction extends PagarMeModel<Integer> {
     /**
      * @return {@link #subscriptionId}
      */
-    public Integer getSubscriptionId() {
+    public BigInteger getSubscriptionId() {
         return subscriptionId;
     }
 
