@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import me.pagar.model.filter.PayableQueriableFields;
 import me.pagar.util.JSONUtils;
 
-public class Transaction extends PagarMeModel<Integer> {
+public class Transaction extends PagarMeModel<BigInteger> {
 
     @Expose(deserialize = false)
     private Boolean async;
@@ -507,7 +507,7 @@ public class Transaction extends PagarMeModel<Integer> {
         return other;
     }
 
-    public Transaction find(Integer id) throws PagarMeException {
+    public Transaction find(BigInteger id) throws PagarMeException {
 
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 

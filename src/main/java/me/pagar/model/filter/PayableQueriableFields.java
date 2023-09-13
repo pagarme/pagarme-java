@@ -1,5 +1,7 @@
 package me.pagar.model.filter;
 
+import java.math.BigInteger;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -33,7 +35,7 @@ public class PayableQueriableFields extends QueriableFieldsAbstract implements Q
         super.setEquals(RECIPIENT_ID, recipientId);
     }
 
-    public void transactionIdEquals(Integer transactionId){
+    public void transactionIdEquals(BigInteger transactionId){
         super.setEquals(TRANSACTION_ID, transactionId.toString());
     }
 

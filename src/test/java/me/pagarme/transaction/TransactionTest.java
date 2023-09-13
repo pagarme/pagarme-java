@@ -1,5 +1,6 @@
 package me.pagarme.transaction;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -316,7 +317,7 @@ public class TransactionTest extends BaseTest {
         transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
         transaction.save();
 
-        Integer transactionId = transaction.getId();
+        BigInteger transactionId = transaction.getId();
 
         transaction = transaction.find(transactionId);
         Assert.assertEquals(transaction.getId(), transactionId);
