@@ -30,7 +30,7 @@ public class Payable extends PagarMeModel<BigInteger> {
     private Integer installment;
 
     @Expose(serialize = false)
-    private Integer transactionId;
+    private BigInteger transactionId;
 
     @Expose(serialize = false)
     private String splitRuleId;
@@ -120,7 +120,7 @@ public class Payable extends PagarMeModel<BigInteger> {
         return installment;
     }
 
-    public Integer getTransactionId() {
+    public BigInteger getTransactionId() {
         return transactionId;
     }
 
@@ -177,7 +177,7 @@ public class Payable extends PagarMeModel<BigInteger> {
         this.installment = installment;
     }
 
-    public void setTransactionId(Integer transactionId) {
+    public void setTransactionId(BigInteger transactionId) {
         this.transactionId = transactionId;
     }
 
