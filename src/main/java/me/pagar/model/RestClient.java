@@ -56,8 +56,8 @@ public class RestClient {
 
         int sysMajorVersion = RestClient.getJavaVersion();
 
-        if (sysMajorVersion < 6 || sysMajorVersion > 8) {
-            throw new PagarMeException("Your installed Java version should be >= 6 and <= 8");
+        if (sysMajorVersion < 6 || sysMajorVersion > 11) {
+            throw new PagarMeException("Your installed Java version should be >= 6 and <= 11");
         }
 
         if (sysMajorVersion == 6) {
