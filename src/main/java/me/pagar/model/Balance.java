@@ -31,6 +31,18 @@ public class Balance {
         return transferred;
     }
 
+    public void setAvailable(Summary available) {
+        this.available = available;
+    }
+
+    public void setWaitingFunds(Summary waitingFunds){
+        this.waitingFunds = waitingFunds;
+    }
+
+    public void setTransferred(Summary transferred){
+        this.transferred = transferred;
+    }
+
     public Balance refresh() throws PagarMeException {
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s", getClass().getName()));
         final Balance other = JSONUtils.getAsObject((JsonObject) request.execute(), Balance.class);
@@ -51,6 +63,10 @@ public class Balance {
 
         public Integer getAmount() {
             return amount;
+        }
+
+        public void setAmount(Integer amount) {
+            this.amount = amount;
         }
 
     }

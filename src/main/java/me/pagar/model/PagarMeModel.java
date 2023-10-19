@@ -32,7 +32,7 @@ public abstract class PagarMeModel<PK extends Serializable> {
     /**
      * Número identificador da transação
      */
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     @SerializedName("id")
     private PK id;
 

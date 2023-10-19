@@ -63,6 +63,42 @@ public class BulkAnticipation extends PagarMeModel<String> {
         return anticipationFee;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
+
+    public void setFee(Integer fee) {
+        this.fee = fee;
+    }
+
+    public void setAnticipationFee(Integer anticipationFee) {
+        this.anticipationFee = anticipationFee;
+    }
+
+    public void setBuilding(Boolean building) {
+        this.building = building;
+    }
+
+    public void setPaymentDate(DateTime paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public void setTimeframe(Timeframe timeframe) {
+        this.timeframe = timeframe;
+    }
+
+    public void setRequestedAmount(Integer requestedAmount) {
+        this.requestedAmount = requestedAmount;
+    }
+
+    public void setBuild(Boolean build) {
+        this.build = build;
+    }
+
     public Boolean getBuild() {
         return build;
     }
@@ -89,7 +125,7 @@ public class BulkAnticipation extends PagarMeModel<String> {
         @SerializedName("pending")
         PENDING, 
 
-        @SerializedName("aproved")
+        @SerializedName("approved")
         APPROVED, 
 
         @SerializedName("refused")

@@ -530,6 +530,10 @@ public class Transaction extends PagarMeModel<BigInteger> {
         return subscriptionId;
     }
 
+    public void setSubscriptionId(Integer id) {
+        this.subscriptionId = id;
+    }
+
     /**
      * @return {@link #amount}
      */
@@ -1111,36 +1115,31 @@ public class Transaction extends PagarMeModel<BigInteger> {
      *
      * @throws PagarMeException
      */
-    public Transaction refund(final Integer amount) throws PagarMeException {
+    public Transaction refund(Integer amount, BankAccount bankAccount, Collection<SplitRule> splitRules) throws PagarMeException {
         validateId();
-
         final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST,
                 String.format("/%s/%s/refund", getClassName(), getId()));
         request.getParameters().put("amount", amount);
-
+        if (splitRules != null && !splitRules.isEmpty()) {
+            request.getParameters().put("split_rules", splitRules);
+        }
+        if (bankAccount != null) {
+            Map<String, Object> bankAccountMap = JSONUtils.objectToMap(bankAccount);
+            request.getParameters().put("bank_account", bankAccountMap);
+        }
         final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
         copy(other);
         flush();
 
         return other;
     }
-    
-    public Transaction refund(final BankAccount bankAccount) throws PagarMeException {
-        validateId();
 
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST,
-                String.format("/%s/%s/refund", getClassName(), getId()));
-                
-        Map<String, Object> bankAccountMap = JSONUtils.objectToMap(bankAccount);
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("bank_account", bankAccountMap);
-        request.setParameters(parameters);
+    public Transaction refund(final Integer amount, BankAccount bankAccount) throws PagarMeException {
+        return refund(amount, bankAccount, null);
+    }
 
-        final Transaction other = JSONUtils.getAsObject((JsonObject) request.execute(), Transaction.class);
-        copy(other);
-        flush();
-
-        return other;
+    public Transaction refund(final Integer amount) throws PagarMeException {
+        return refund(amount, null);
     }
 
     /**
