@@ -19,14 +19,14 @@ public class BulkAnticipationHelpers {
         return recipient.save();
     }
 
-    public static BulkAnticipation createAnticipation(Integer requestedAmount, Timeframe timeFrame, Boolean build, Recipient recipient)
+    public static BulkAnticipation createAnticipation(Integer requestedAmount, Timeframe timeFrame, Recipient recipient)
             throws PagarMeException, Exception {
         Transaction transaction = transactionFactory.createCreditCardTransactionWithoutPinMode();
         transaction.setAmount(requestedAmount);
         transaction.save();
 
         BulkAnticipation anticipation = new BulkAnticipation();
-        anticipation.setRequiredParametersForCreation(PagarmeCalendar.getValidWeekday() , timeFrame, requestedAmount, build);
+        anticipation.setRequiredParametersForCreation(PagarmeCalendar.getValidWeekday(), timeFrame, requestedAmount);
         anticipation = recipient.anticipate(anticipation);
         return anticipation;
     }

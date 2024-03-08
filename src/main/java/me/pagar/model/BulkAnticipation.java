@@ -1,8 +1,5 @@
 package me.pagar.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.joda.time.DateTime;
 
 import com.google.gson.annotations.Expose;
@@ -28,8 +25,6 @@ public class BulkAnticipation extends PagarMeModel<String> {
 
     @Expose(deserialize=false)
     private Integer requestedAmount;
-    @Expose(deserialize = false)
-    private Boolean build;
 
     public DateTime getPaymentDate() {
         return paymentDate;
@@ -63,22 +58,15 @@ public class BulkAnticipation extends PagarMeModel<String> {
         return anticipationFee;
     }
 
-    public Boolean getBuild() {
-        return build;
-    }
-
     public void setRequiredParametersForAnticipationLimit(DateTime paymentDate, Timeframe timeframe){
         this.paymentDate = paymentDate;
         this.timeframe = timeframe;
     }
 
-    public void setRequiredParametersForCreation(DateTime paymentDate, Timeframe timeframe, Integer requestedAmount, Boolean build){
+    public void setRequiredParametersForCreation(DateTime paymentDate, Timeframe timeframe, Integer requestedAmount){
         this.paymentDate = paymentDate;
         this.timeframe = timeframe;
         this.requestedAmount = requestedAmount;
-        if(build){
-            this.build = build;
-        }
     }
 
     public enum Status{

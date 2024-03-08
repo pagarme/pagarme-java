@@ -246,13 +246,6 @@ public class Recipient  extends PagarMeModel<String> {
         return newAnticipation;
     }
 
-    public void deleteAnticipation(BulkAnticipation anticipation) throws PagarMeException{
-        validateId();
-        String path = String.format("/%s/%s/%s/%s", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.DELETE, path);
-        request.execute();
-    }
-
     public BulkAnticipation cancelAnticipation(BulkAnticipation anticipation) throws PagarMeException{
         validateId();
         String path = String.format("/%s/%s/%s/%s/cancel", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
@@ -260,15 +253,6 @@ public class Recipient  extends PagarMeModel<String> {
         JsonObject response = request.execute();
         BulkAnticipation canceledAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
         return canceledAnticipation;
-    }
-
-    public BulkAnticipation confirmBulkAnticipation(BulkAnticipation anticipation) throws PagarMeException{
-        validateId();
-        String path = String.format("/%s/%s/%s/%s/confirm", getClassName(), getId(), anticipation.getClassName(), anticipation.getId());
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
-        JsonObject response = request.execute();
-        BulkAnticipation confirmedAnticipation = JSONUtils.getAsObject(response, BulkAnticipation.class);
-        return confirmedAnticipation;
     }
 
     public Collection<BulkAnticipation> findAnticipations(int count, int page) throws PagarMeException{
