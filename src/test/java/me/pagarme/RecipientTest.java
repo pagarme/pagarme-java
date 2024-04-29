@@ -5,6 +5,7 @@ import java.util.Collection;
 import me.pagar.RecipientStatus;
 import me.pagar.AutoAnticipationType;
 
+import me.pagar.model.KYCLink;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -140,4 +141,14 @@ public class RecipientTest extends BaseTest{
         Assert.assertEquals(recipient.getAutomaticAnticipationType(), AutoAnticipationType.FULL);
     }
 
+    @Test
+    public void testGenerateKYCLink() throws PagarMeException {
+        Recipient recipient = recipientFactory.create();
+        recipient.save();
+        KYCLink kycLink = recipient.generateKYCLink();
+
+        Assert.assertNotNull(kycLink.getBase64());
+        Assert.assertNotNull(kycLink.getUrl());
+        Assert.assertNotNull(kycLink.getExpirationDate());
+    }
 }

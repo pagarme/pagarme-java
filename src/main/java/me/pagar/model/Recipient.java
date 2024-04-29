@@ -266,6 +266,15 @@ public class Recipient  extends PagarMeModel<String> {
         return anticipations;
     }
 
+    public KYCLink generateKYCLink() throws PagarMeException {
+        validateId();
+        String path = String.format("recipients/%s/kyc_link", getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
+        JsonObject response = request.execute();
+        KYCLink kycLink = JSONUtils.getAsObject(response, KYCLink.class);
+        return kycLink;
+    }
+
     public Recipient refresh() throws PagarMeException {
         final Recipient other = JSONUtils.getAsObject(refreshModel(), Recipient.class);
         copy(other);
