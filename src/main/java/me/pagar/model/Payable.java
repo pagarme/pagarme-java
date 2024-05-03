@@ -57,6 +57,9 @@ public class Payable extends PagarMeModel<BigInteger> {
     private Date originalPaymentDate;
 
     @Expose
+    private Date accrualDate;
+
+    @Expose
     private PaymentMethod paymentMethod;
 
     public Payable() {
@@ -101,6 +104,7 @@ public class Payable extends PagarMeModel<BigInteger> {
         this.status = other.status;
         this.transactionId = other.transactionId;
         this.type = other.type;
+        this.accrualDate = other.accrualDate;
     }
 
     @Override
@@ -215,6 +219,14 @@ public class Payable extends PagarMeModel<BigInteger> {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public Date getAccrualDate() {
+        return accrualDate;
+    }
+
+    public void setAccrualDate(Date accrualDate) {
+        this.accrualDate = accrualDate;
     }
 
     @Override
