@@ -73,6 +73,14 @@ public class Recipient  extends PagarMeModel<String> {
     @SerializedName("date_updated")
     private DateTime updatedAt;
 
+    @Expose
+    @SerializedName("register_information")
+    private RegisterInformation registerInformation;
+
+    public RegisterInformation getRegisterInformation() {
+        return registerInformation;
+    }
+
     public Boolean isAutomaticAnticipationEnabled() {
         return automaticAnticipationEnabled;
     }
@@ -179,6 +187,11 @@ public class Recipient  extends PagarMeModel<String> {
         this.anticipatableVolumePercentage = anticipatableVolumePercentage;
     }
 
+    public void setRegisterInformation(RegisterInformation registerInformation) {
+        this.registerInformation = registerInformation;
+    }
+
+
     public Recipient save() throws PagarMeException {
         final Recipient saved = super.save(getClass());
         copy(saved);
@@ -266,6 +279,15 @@ public class Recipient  extends PagarMeModel<String> {
         return anticipations;
     }
 
+    public KYCLink generateKYCLink() throws PagarMeException {
+        validateId();
+        String path = String.format("/recipients/%s/kyc_link", getId());
+        final PagarMeRequest request = new PagarMeRequest(HttpMethod.POST, path);
+        JsonObject response = request.execute();
+        KYCLink kycLink = JSONUtils.getAsObject(response, KYCLink.class);
+        return kycLink;
+    }
+
     public Recipient refresh() throws PagarMeException {
         final Recipient other = JSONUtils.getAsObject(refreshModel(), Recipient.class);
         copy(other);
@@ -287,6 +309,7 @@ public class Recipient  extends PagarMeModel<String> {
         this.automaticAnticipationType = other.automaticAnticipationType;
         this.automaticAnticipationDays = other.automaticAnticipationDays;
         this.automaticAnticipationDelay = other.automaticAnticipationDelay;
+        this.registerInformation = other.registerInformation;
     }
 
     public enum TransferInterval {
