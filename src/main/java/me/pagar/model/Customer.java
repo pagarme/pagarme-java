@@ -1,272 +1,283 @@
 package me.pagar.model;
 
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.google.gson.reflect.TypeToken;
-import org.joda.time.LocalDate;
-import me.pagar.util.JSONUtils;
-
 import javax.ws.rs.HttpMethod;
 
-public class Customer extends PagarMeModel<Integer>{
+import org.joda.time.LocalDate;
 
-    @Expose
-    @SerializedName("document_number")
-    private String documentNumber;
+import com.google.gson.JsonObject;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
-    @Expose(serialize = false)
-    @SerializedName("document_type")
-    private String documentType;
+import me.pagar.util.JSONUtils;
 
-    @Expose
-    private String name;
+public class Customer extends PagarMeModel<Integer> {
 
-    @Expose
-    private String email;
+	public enum Type {
+		@SerializedName("individual")
+		INDIVIDUAL,
 
-    @Expose
-    private String gender;
+		@SerializedName("corporation")
+		CORPORATION
+	}
 
-    @Expose
-    @SerializedName("born_at")
-    private LocalDate bornAt;
+	@Expose
+	@SerializedName("document_number")
+	private String documentNumber;
 
-    @Expose
-    private Phone phone;
+	@Expose(serialize = false)
+	@SerializedName("document_type")
+	private String documentType;
 
-    @Expose
-    private Address address;
+	@Expose
+	private String name;
 
-    @Expose
-    private Collection<Address> addresses;
+	@Expose
+	private String email;
 
-    @Expose
-    private Collection<Phone> phones;
+	@Expose
+	private String gender;
 
-    @Expose
-    @SerializedName("external_id")
-    private String externalId;
+	@Expose
+	@SerializedName("born_at")
+	private LocalDate bornAt;
 
-    @Expose
-    private Type type;
+	@Expose
+	private Phone phone;
 
-    @Expose
-    private String country;
+	@Expose
+	private Address address;
 
-    @Expose
-    private Collection<Document> documents;
+	@Expose
+	private Collection<Address> addresses;
 
-    @Expose
-    @SerializedName("phone_numbers")
-    private Collection<String> phoneNumbers;
+	@Expose
+	private Collection<Phone> phones;
 
-    @Expose
-    private String birthday;
+	@Expose
+	@SerializedName("external_id")
+	private String externalId;
 
-    public Customer() {
-        super();
-    }
+	@Expose
+	private Type type;
 
-    public Customer(final String name, final String email) {
-        this();
-        this.name = name;
-        this.email = email;
-        this.addresses = new ArrayList<Address>();
-        this.address = new Address();
-        this.phones = new ArrayList<Phone>();
-        this.phone = new Phone();
-    }
+	@Expose
+	private String country;
 
-    public String getDocumentNumber() {
-        return documentNumber;
-    }
+	@Expose
+	private Collection<Document> documents;
 
-    public String getDocumentType() {
-        return documentType;
-    }
+	@Expose
+	@SerializedName("phone_numbers")
+	private Collection<String> phoneNumbers;
 
-    public String getName() {
-        return name;
-    }
+	@Expose
+	private String birthday;
 
-    public String getEmail() {
-        return email;
-    }
+	@Expose
+	private Integer customerId;
 
-    public String getGender() {
-        return gender;
-    }
+	public Customer() {
+		super();
+	}
 
-    public LocalDate getBornAt() {
-        return bornAt;
-    }
+	public Customer(final String name, final String email) {
+		this();
+		this.name		= name;
+		this.email		= email;
+		this.addresses	= new ArrayList<Address>();
+		this.address	= new Address();
+		this.phones		= new ArrayList<Phone>();
+		this.phone		= new Phone();
+	}
 
-    public Phone getPhone() {
-        return phone;
-    }
+	private void copy(Customer other) {
+		super.copy(other);
+		this.documentNumber	= other.documentNumber;
+		this.documentType	= other.documentType;
+		this.name			= other.name;
+		this.email			= other.email;
+		this.bornAt			= other.bornAt;
+		this.gender			= other.gender;
+	}
 
-    public Address getAddress() {
-        return address;
-    }
+	public Customer find(int id) throws PagarMeException {
 
-    public Collection<Address> getAddresses() {
-        return addresses;
-    }
+		final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET, String.format("/%s/%s", getClassName(), id));
 
-    public Collection<Phone> getPhones() {
-        return phones;
-    }
+		final Customer other = JSONUtils.getAsObject((JsonObject) request.execute(), Customer.class);
+		copy(other);
+		flush();
 
-    public String getExternalId() {
-        return externalId;
-    }
+		return other;
+	}
 
-    public Type getType() {
-        return type;
-    }
+	public Collection<Customer> findCollection(int totalPerPage, int page) throws PagarMeException {
+		return JSONUtils.getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Customer>>() {
+		}.getType());
+	}
 
-    public String getCountry() {
-        return country;
-    }
+	public Address getAddress() {
+		return address;
+	}
 
-    public String getBirthday() {
-        return birthday;
-    }
+	public Collection<Address> getAddresses() {
+		return addresses;
+	}
 
-    public Collection<String> getPhoneNumbers() {
-        return phoneNumbers;
-    }
+	public String getBirthday() {
+		return birthday;
+	}
 
-    public Collection<Document> getDocuments() {
-        return documents;
-    }
+	public LocalDate getBornAt() {
+		return bornAt;
+	}
 
-    public void setDocumentNumber(final String documentNumber) {
-        this.documentNumber = documentNumber;
-        addUnsavedProperty("documentNumber");
-    }
+	public String getCountry() {
+		return country;
+	}
 
-    public void setDocumentType(final String documentType) {
-        this.documentType = documentType;
-        addUnsavedProperty("documentType");
-    }
+	public Integer getCustomerId() {
+		return customerId;
+	}
 
-    public void setName(final String name) {
-        this.name = name;
-        addUnsavedProperty("name");
-    }
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
 
-    public void setEmail(final String email) {
-        this.email = email;
-        addUnsavedProperty("email");
-    }
+	public Collection<Document> getDocuments() {
+		return documents;
+	}
 
-    public void setGender(final String gender) {
-        this.gender = gender;
-        addUnsavedProperty("gender");
-    }
+	public String getDocumentType() {
+		return documentType;
+	}
 
-    public void setBornAt(final LocalDate bornAt) {
-        this.bornAt = bornAt;
-        if (bornAt != null) {
-            addUnsavedProperty("bornAt");
-        }
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setExternalId(final String externalId) {
-        this.externalId = externalId;
-    }
+	public String getExternalId() {
+		return externalId;
+	}
 
-    public void setPhone(final Phone phone) {
-        this.phone = phone;
-        addUnsavedProperty("phone");
-    }
+	public String getGender() {
+		return gender;
+	}
 
-    public void setAddress(final Address address) {
-        this.address = address;
-        addUnsavedProperty("address");
-    }
+	public Integer getIdcliente() {
+		return id;
+	}
 
-    public void setAddresses(final Collection<Address> addresses) {
-        this.addresses = addresses;
-        addUnsavedProperty("addresses");
-    }
+	public Phone getPhone() {
+		return phone;
+	}
 
-    public void setPhones(final Collection<Phone> phones) {
-        this.phones = phones;
-        addUnsavedProperty("phones");
-    }
+	public Collection<String> getPhoneNumbers() {
+		return phoneNumbers;
+	}
 
-    public void setType(final Type type) {
-        this.type = type;
-    }
+	public Collection<Phone> getPhones() {
+		return phones;
+	}
 
-    public void setCountry(final String country) {
-        this.country = country;
-    }
+	public Type getType() {
+		return type;
+	}
 
-    public void setPhoneNumbers(final Collection<String> phoneNumbers) {
-        this.phoneNumbers = phoneNumbers;
-    }
+	public Customer save() throws PagarMeException {
 
-    public void setBirthday(final String birthday) {
-        this.birthday = birthday;
-    }
+		final Customer saved = super.save(getClass());
+		copy(saved);
 
-    public void setDocuments(final Collection<Document> documents) {
-        this.documents = documents;
-    }
+		return saved;
+	}
 
-    public enum Type {
-        @SerializedName("individual")
-        INDIVIDUAL,
+	public void setAddress(final Address address) {
+		this.address = address;
+		addUnsavedProperty("address");
+	}
 
-        @SerializedName("corporation")
-        CORPORATION
-    }
+	public void setAddresses(final Collection<Address> addresses) {
+		this.addresses = addresses;
+		addUnsavedProperty("addresses");
+	}
 
-    public Customer save() throws PagarMeException {
+	public void setBirthday(final String birthday) {
+		this.birthday = birthday;
+	}
 
-        final Customer saved = super.save(getClass());
-        copy(saved);
+	public void setBornAt(final LocalDate bornAt) {
+		this.bornAt = bornAt;
+		if (bornAt != null) {
+			addUnsavedProperty("bornAt");
+		}
+	}
 
-        return saved;
-    }
+	@Override
+	public void setClassName(String className) {
+		throw new UnsupportedOperationException("Not allowed.");
+	}
 
-    public Customer find(int id) throws PagarMeException {
+	public void setCountry(final String country) {
+		this.country = country;
+	}
 
-        final PagarMeRequest request = new PagarMeRequest(HttpMethod.GET,
-                String.format("/%s/%s", getClassName(), id));
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
+	}
 
-        final Customer other = JSONUtils.getAsObject((JsonObject) request.execute(), Customer.class);
-        copy(other);
-        flush();
+	public void setDocumentNumber(final String documentNumber) {
+		this.documentNumber = documentNumber;
+		addUnsavedProperty("documentNumber");
+	}
 
-        return other;
-    }
+	public void setDocuments(final Collection<Document> documents) {
+		this.documents = documents;
+	}
 
-    public Collection<Customer> findCollection(int totalPerPage, int page) throws PagarMeException {
-        return JSONUtils.getAsList(super.paginate(totalPerPage, page), new TypeToken<Collection<Customer>>() {
-        }.getType());
-    }
+	public void setDocumentType(final String documentType) {
+		this.documentType = documentType;
+		addUnsavedProperty("documentType");
+	}
 
-    private void copy(Customer other) {
-        super.copy(other);
-        this.documentNumber = other.documentNumber;
-        this.documentType   = other.documentType;
-        this.name           = other.name;
-        this.email          = other.email;
-        this.bornAt         = other.bornAt;
-        this.gender         = other.gender;
-    }
+	public void setEmail(final String email) {
+		this.email = email;
+		addUnsavedProperty("email");
+	}
 
-    @Override
-    public void setClassName(String className) {
-        throw new UnsupportedOperationException("Not allowed.");
-    }
+	public void setExternalId(final String externalId) {
+		this.externalId = externalId;
+	}
+
+	public void setGender(final String gender) {
+		this.gender = gender;
+		addUnsavedProperty("gender");
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+		addUnsavedProperty("name");
+	}
+
+	public void setPhone(final Phone phone) {
+		this.phone = phone;
+		addUnsavedProperty("phone");
+	}
+
+	public void setPhoneNumbers(final Collection<String> phoneNumbers) {
+		this.phoneNumbers = phoneNumbers;
+	}
+
+	public void setPhones(final Collection<Phone> phones) {
+		this.phones = phones;
+		addUnsavedProperty("phones");
+	}
+
+	public void setType(final Type type) {
+		this.type = type;
+	}
 }
