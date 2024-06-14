@@ -1,53 +1,29 @@
 package me.pagarme;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import me.pagar.model.PagarMe;
 import me.pagar.model.PagarMeException;
 import me.pagar.model.Recipient;
-import me.pagar.model.SplitRule;
-import me.pagar.model.Transaction;
 import me.pagar.model.Transfer;
 import me.pagarme.factory.RecipientFactory;
-import me.pagarme.factory.TransactionFactory;
-import me.pagarme.helper.TestEndpoints;
+import me.pagarme.helper.BalanceHelpers;
 
 public class TransferTest extends BaseTest {
 
-    private TestEndpoints testEndpoints = new TestEndpoints();
-
-    private RecipientFactory recipientFactory = new RecipientFactory();
-    private TransactionFactory transactionFactory = new TransactionFactory();
-
     private Recipient newRecipient;
+    private RecipientFactory recipientFactory = new RecipientFactory();
 
     @Before
     public void setUpEnvironment() throws PagarMeException{
         super.setUp();
 
-        Recipient defaultRecipient = (Recipient) new Recipient().findCollection(1, 0).toArray()[0];
         newRecipient = recipientFactory.create();
         newRecipient.save();
-
-        //Coloca um pouco de saldo na conta desse recebedor
-        SplitRule split1 = new SplitRule();
-        split1.setPercentage(50);
-        split1.setRecipientId(defaultRecipient.getId());
-        SplitRule split2 = new SplitRule();
-        split2.setPercentage(50);
-        split2.setRecipientId(newRecipient.getId());
-        Transaction transaction = transactionFactory.createBoletoTransaction();
-        transaction.setAmount(Integer.MAX_VALUE);
-        transaction.setSplitRules(Arrays.asList(
-            split1, split2
-        ));
-        transaction.save();
-        testEndpoints.payBoleto(transaction);
+        BalanceHelpers.addAvailableBalance(newRecipient, Integer.MAX_VALUE);
     }
 
     @Test
