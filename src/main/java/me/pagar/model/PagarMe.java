@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLDecoder;
+import java.util.Base64;
 import java.util.Formatter;
 
 public abstract class PagarMe {
@@ -29,6 +30,8 @@ public abstract class PagarMe {
 
     private static String apiKey;
 
+    private static String password;
+
     public static String fullApiUrl(final String path) {
         return ENDPOINT.concat("/")
                 .concat(API_VERSION)
@@ -39,8 +42,19 @@ public abstract class PagarMe {
         return apiKey;
     }
 
+    public static String getBasicAuth() {
+        String auth = apiKey + ":" + password;
+        return "Basic " + Base64.getEncoder().encodeToString(auth.getBytes());
+    }
+
     public static void init(String apiKey) {
         PagarMe.apiKey = apiKey;
+        PagarMe.password = "";
+    }
+
+    public static void init(String apiKey, String password) {
+        PagarMe.apiKey = apiKey;
+        PagarMe.password = password;
     }
 
     public static boolean validateRequestSignature(final String payload, final String signature) {

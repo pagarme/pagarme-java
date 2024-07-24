@@ -19,8 +19,6 @@ import java.util.Map;
 
 public class RestClient {
 
-    public final static String API_KEY = "api_key";
-
     public final static String AMOUNT = "amount";
 
     private HttpsURLConnection httpClient;
@@ -97,6 +95,7 @@ public class RestClient {
         headers.put("User-Agent", sdkVersion);
         headers.put("X-PagarMe-User-Agent", sdkVersion);
         headers.put("Accept", "application/json");
+        headers.put("Authorization", PagarMe.getBasicAuth());
 
         if (Strings.isNullOrEmpty(url)) {
             throw new PagarMeException("You must set the URL to make a request.");
@@ -106,8 +105,6 @@ public class RestClient {
 
             try {
                 final UriBuilder builder = UriBuilder.fromPath(this.url);
-
-                builder.queryParam(API_KEY, PagarMe.getApiKey());
 
                 if (this.parameters.containsKey(AMOUNT) && this.parameters.size() == 1) {
                     builder.queryParam(AMOUNT, this.parameters.remove(AMOUNT));
